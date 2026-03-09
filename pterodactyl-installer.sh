@@ -1074,7 +1074,7 @@ main_menu() {
     echo -e "  ${GREEN}2${NC}) Install Wings Daemon"
     echo -e "  ${GREEN}3${NC}) Quick Setup (Panel + Wings)"
     echo -e "  ${GREEN}4${NC}) Auto-Configure Wings ${YELLOW}⭐${NC} (Recommended)"
-    echo -e "  ${GREEN}5${NC}) Install Themes ${MAGENTA}🎨${NC} (Blueprint + Nebula + Hyper-V)"
+    echo -e "  ${GREEN}5${NC}) Install Themes ${MAGENTA}🎨${NC} (Nebula + Hyper-V + SATYAM)"
     echo -e "  ${GREEN}6${NC}) Uninstall Pterodactyl"
     echo -e "  ${GREEN}0${NC}) Exit"
     echo ""
