@@ -69,6 +69,17 @@ show_logo() {
     echo ""
 }
 
+# ─────────────────────────────────────────────────────────────────────
+# HELPER FUNCTIONS
+# ─────────────────────────────────────────────────────────────────────
+
+# Colored input prompt (works better than read -p with colors)
+input_prompt() {
+    echo -ne "$1"
+    read -r INPUT_RESPONSE
+    echo -e "${NC}"
+}
+
 # Success message
 success() {
     echo -e "${GREEN}✓${NC} $1"
@@ -1069,7 +1080,8 @@ main_menu() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    read -p "${CYAN}❯${NC} Enter your choice [0-6]: " choice
+    echo -ne "❯ Enter your choice [0-6]: "
+    read choice
     echo ""
 
     case $choice in
