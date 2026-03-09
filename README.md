@@ -295,9 +295,8 @@ systemctl restart wings
 
 **Made by SATYAM BHAIi**
 
-- 📧 Email: satyambhaii@example.com
-- 💬 Telegram: @satyambhaii
-- 🌐 GitHub: github.com/satyambhaii
+- 📧 Email: sgsatyam27@gmail.com
+- 🌐 GitHub: github.com/Satyam-Bhaii
 
 ---
 
