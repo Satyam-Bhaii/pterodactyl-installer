@@ -1,6 +1,6 @@
 # 🚀 Complete Installation Guide
 
-**Made by SATYAM BHAIi** | Pterodactyl Installer v3.0
+**Made by SATYAM BHAIi** | Pterodactyl Installer v3.1
 
 ---
 

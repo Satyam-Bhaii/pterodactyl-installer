@@ -2,6 +2,8 @@
 
 **Made by SATYAM BHAIi**
 
+Version: 3.1
+
 Thank you for considering contributing to Pterodactyl Installer! This guide will help you get started.
 
 ---

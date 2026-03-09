@@ -16,7 +16,7 @@
  ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝
 ```
 
-**Made by SATYAM BHAIi** | Version: 3.0
+**Made by SATYAM BHAIi** | Version: 4.0 (Modern UI)
 
 [![GitHub stars](https://img.shields.io/github/stars/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/network)
@@ -32,6 +32,21 @@
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh)
 ```
+
+**That's it!** Interactive menu mein se option select karo aur bas! ✨
+
+---
+
+## ✨ What's New in v4.0? (Modern UI Update)
+
+- 🎨 **Completely Redes UI** - Modern box-style interface
+- 🌈 **Colorful Messages** - Beautiful colored output
+- 📦 **Box-Style Prompts** - Professional looking input boxes
+- ✨ **Enhanced Logo** - Stylish ASCII art with colors
+- 🎯 **Smart Defaults** - Auto-fill common values
+- 🔄 **Better Validation** - Real-time input checking
+- 📊 **Progress Indicators** - Know what's happening
+- 🎭 **Modern Icons** - Emoji-based visual cues
 
 ### 📥 Download & Install
 

@@ -2,6 +2,8 @@
 
 **Made by SATYAM BHAIi**
 
+Version: 3.1
+
 ---
 
 ## 📋 Table of Contents
