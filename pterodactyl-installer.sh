@@ -900,6 +900,7 @@ show_help() {
     echo "  wings          - Install Wings Daemon only"
     echo "  quick          - Quick setup (Panel + Wings)"
     echo "  configure      - Auto-configure Wings (enter UUID, Token, etc.)"
+    echo "  themes         - Install Themes (Blueprint + Nebula + Hyper-V)"
     echo "  uninstall      - Remove Pterodactyl"
     echo "  help           - Show this help message"
     echo ""
@@ -914,6 +915,7 @@ show_help() {
     echo "  EMAIL=admin@example.com PASSWORD=MyPass123 $0 panel"
     echo "  $0 wings"
     echo "  $0 configure     # Auto-configure Wings with UUID/Token"
+    echo "  $0 themes        # Install themes menu"
     echo "  $0 quick"
     echo ""
     echo -e "${CYAN}🌐 GitHub:${NC} ${GITHUB_REPO}"
@@ -933,19 +935,20 @@ main_menu() {
     echo -e "  ${GREEN}2${NC}) Install Wings Daemon"
     echo -e "  ${GREEN}3${NC}) Quick Setup (Panel + Wings)"
     echo -e "  ${GREEN}4${NC}) Auto-Configure Wings ${YELLOW}⭐${NC} (Recommended)"
-    echo -e "  ${GREEN}5${NC}) Uninstall Pterodactyl"
+    echo -e "  ${GREEN}5${NC}) Install Themes ${MAGENTA}🎨${NC} (Blueprint + Nebula + Hyper-V)"
+    echo -e "  ${GREEN}6${NC}) Uninstall Pterodactyl"
     echo -e "  ${GREEN}0${NC}) Exit"
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    read -p "${CYAN}❯${NC} Enter your choice [0-5]: " choice
+    read -p "${CYAN}❯${NC} Enter your choice [0-6]: " choice
     echo ""
 
     case $choice in
-        0|1|2|3|4|5)
+        0|1|2|3|4|5|6)
             ;;
         *)
-            echo -e "${RED}❌ Invalid option. Please enter 0-5.${NC}\n"
+            echo -e "${RED}❌ Invalid option. Please enter 0-6.${NC}\n"
             main_menu
             ;;
     esac
@@ -955,10 +958,238 @@ main_menu() {
         2) install_wings_only ;;
         3) quick_setup ;;
         4) auto_configure_wings ;;
-        5) uninstall ;;
+        5) install_themes_menu ;;
+        6) uninstall ;;
         0) echo -e "${GREEN}👋 Goodbye!${NC}\n"; exit 0 ;;
     esac
 }
+
+# ─────────────────────────────────────────────────────────────────────
+# THEME INSTALLER (Blueprint + Nebula + Hyper-V)
+# ─────────────────────────────────────────────────────────────────────
+
+install_themes_menu() {
+    show_logo
+    
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🎨 Theme Installer${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "  ${GREEN}1${NC}) Install Blueprint Framework (Required for themes)"
+    echo -e "  ${GREEN}2${NC}) Install Nebula Theme"
+    echo -e "  ${GREEN}3${NC}) Install Hyper-V Theme"
+    echo -e "  ${GREEN}4${NC}) Install All (Blueprint + Nebula + Hyper-V)"
+    echo -e "  ${GREEN}0${NC}) Back to Main Menu"
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    
+    read -p "${CYAN}❯${NC} Enter your choice [0-4]: " theme_choice
+    echo ""
+    
+    case $theme_choice in
+        1) install_blueprint ;;
+        2) install_nebula_theme ;;
+        3) install_hyperv_theme ;;
+        4) install_all_themes ;;
+        0) main_menu ;;
+        *) echo -e "${RED}❌ Invalid option.${NC}\n"; install_themes_menu ;;
+    esac
+}
+
+install_blueprint() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}📦 Installing Blueprint Framework${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Get panel directory
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
+        error "Directory $PANEL_DIR_INPUT does not exist!"
+    fi
+    
+    info "Panel Directory: $PANEL_DIR_INPUT"
+    echo ""
+    
+    # Install dependencies
+    echo -e "${YELLOW}Installing dependencies...${NC}"
+    apt-get install -y curl wget unzip zip &>/dev/null
+    
+    # Install Node.js
+    echo -e "${YELLOW}Installing Node.js...${NC}"
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - &>/dev/null
+    apt-get install -y nodejs &>/dev/null
+    npm install -g yarn &>/dev/null
+    
+    cd "$PANEL_DIR_INPUT" || exit
+    
+    # Download Blueprint
+    echo -e "${YELLOW}Downloading Blueprint...${NC}"
+    wget -q "https://github.com/BlueprintFramework/framework/releases/latest/download/release.zip" -O "$PANEL_DIR_INPUT/release.zip"
+    unzip -o release.zip &>/dev/null
+    rm -f release.zip
+    
+    # Create .blueprintrc
+    echo -e "${YELLOW}Configuring Blueprint...${NC}"
+    cat > "$PANEL_DIR_INPUT/.blueprintrc" << 'EOF'
+WEBUSER="www-data";
+OWNERSHIP="www-data:www-data";
+USERSHELL="/bin/bash";
+EOF
+    
+    # Set permissions
+    chmod +x "$PANEL_DIR_INPUT/blueprint.sh"
+    chown -R www-data:www-data "$PANEL_DIR_INPUT"
+    
+    # Install Node dependencies
+    echo -e "${YELLOW}Installing Node dependencies...${NC}"
+    cd "$PANEL_DIR_INPUT"
+    yarn install &>/dev/null
+    
+    # Run Blueprint
+    echo -e "${YELLOW}Running Blueprint...${NC}"
+    bash "$PANEL_DIR_INPUT/blueprint.sh" &>/dev/null
+    
+    # Clear cache
+    cd "$PANEL_DIR_INPUT"
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "Blueprint Framework installed successfully!"
+    echo ""
+    echo -e "${GREEN}Next: Install themes (Nebula or Hyper-V)${NC}"
+    echo ""
+    
+    read -p "Install themes now? (y/n): " install_now
+    if [[ "$install_now" =~ ^[Yy]$ ]]; then
+        install_themes_menu
+    fi
+}
+
+install_nebula_theme() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🎨 Installing Nebula Theme${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Check if Blueprint is installed
+    if [[ ! -f "/var/www/pterodactyl/blueprint.sh" ]]; then
+        warn "Blueprint not found! Installing first..."
+        install_blueprint
+    fi
+    
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    cd "$PANEL_DIR_INPUT" || exit
+    
+    # Download Nebula
+    echo -e "${YELLOW}Downloading Nebula Theme...${NC}"
+    NEBULA_URL="https://github.com/BlueprintFramework/nebula-theme/releases/latest/download/release.zip"
+    wget -q "$NEBULA_URL" -O nebula.zip
+    unzip -o nebula.zip &>/dev/null
+    rm -f nebula.zip
+    
+    # Set permissions
+    chown -R www-data:www-data "$PANEL_DIR_INPUT"
+    chmod -R 755 "$PANEL_DIR_INPUT/storage" "$PANEL_DIR_INPUT/bootstrap/cache"
+    
+    # Clear cache
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan view:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "Nebula Theme installed successfully!"
+    echo ""
+    echo -e "${GREEN}Theme activated! Refresh your panel to see changes.${NC}"
+}
+
+install_hyperv_theme() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🎨 Installing Hyper-V Theme${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Check if Blueprint is installed
+    if [[ ! -f "/var/www/pterodactyl/blueprint.sh" ]]; then
+        warn "Blueprint not found! Installing first..."
+        install_blueprint
+    fi
+    
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    cd "$PANEL_DIR_INPUT" || exit
+    
+    # Download Hyper-V
+    echo -e "${YELLOW}Downloading Hyper-V Theme...${NC}"
+    HYPERV_URL="https://r2.rolexdev.tech/hyperv1/Hyperv1.tar"
+    wget -q "$HYPERV_URL" -O Hyperv1.tar
+    
+    # Extract
+    echo -e "${YELLOW}Extracting Hyper-V...${NC}"
+    tar -xf Hyperv1.tar --overwrite
+    rm -f Hyperv1.tar
+    
+    # Set permissions
+    echo -e "${YELLOW}Setting permissions...${NC}"
+    chown -R www-data:www-data "$PANEL_DIR_INPUT"
+    chmod -R 755 "$PANEL_DIR_INPUT/storage" "$PANEL_DIR_INPUT/bootstrap/cache"
+    
+    # Make scripts executable
+    chmod +x "$PANEL_DIR_INPUT/hyper_fetch.sh" 2>/dev/null || true
+    chmod +x "$PANEL_DIR_INPUT/hyper_auto_update.sh" 2>/dev/null || true
+    
+    # Clear cache
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan view:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "Hyper-V Theme installed successfully!"
+    echo ""
+    echo -e "${GREEN}Theme activated! Refresh your panel to see changes.${NC}"
+}
+
+install_all_themes() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🎨 Installing All Themes${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Install Blueprint first
+    install_blueprint
+    
+    # Install Nebula
+    echo -e "\n${YELLOW}Installing Nebula Theme...${NC}"
+    install_nebula_theme
+    
+    # Install Hyper-V
+    echo -e "\n${YELLOW}Installing Hyper-V Theme...${NC}"
+    install_hyperv_theme
+    
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ ALL THEMES INSTALLED!${NC}                  ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${MAGENTA}Installed:${NC}"
+    echo "  ✓ Blueprint Framework"
+    echo "  ✓ Nebula Theme"
+    echo "  ✓ Hyper-V Theme"
+    echo ""
+    echo -e "${YELLOW}Refresh your panel to see themes!${NC}"
+}
+
+# ─────────────────────────────────────────────────────────────────────
+# END THEME INSTALLER
+# ─────────────────────────────────────────────────────────────────────
 
 # Parse command line arguments
 case "${1:-menu}" in
@@ -977,6 +1208,9 @@ case "${1:-menu}" in
         check_root
         install_wings
         auto_configure_wings
+        ;;
+    themes)
+        install_themes_menu
         ;;
     uninstall)
         uninstall
