@@ -458,6 +458,28 @@ configure_wings() {
 # Auto Configure Wings
 auto_configure_wings() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}🔧 Wings Configuration${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "  ${GREEN}1${NC}) Auto-Configure (Interactive)"
+    echo -e "  ${GREEN}2${NC}) Auto-Deploy (One Command with Token) ${YELLOW}⚡${NC}"
+    echo -e "  ${GREEN}0${NC}) Back to Main Menu"
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    
+    read -p "${CYAN}❯${NC} Select configuration method [0-2]: " config_method
+    echo ""
+    
+    case $config_method in
+        1) interactive_configure_wings ;;
+        2) onecommand_deploy_wings ;;
+        0) main_menu ;;
+        *) echo -e "${RED}❌ Invalid option.${NC}\n"; auto_configure_wings ;;
+    esac
+}
+
+interactive_configure_wings() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${BLUE}🔧 Auto Configure Wings${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
@@ -619,6 +641,116 @@ EOF
         fi
     else
         info "Start manually: wings --config /etc/pterodactyl/config.yml"
+    fi
+}
+
+onecommand_deploy_wings() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}⚡ Auto-Deploy Wings (One Command)${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    info "Get token from Panel: Admin → Nodes → Click Node → Copy Token"
+    echo -e "${YELLOW}💡 This will configure Wings with a single command!${NC}\n"
+    
+    # Get panel URL
+    read -p "${CYAN}❯${NC} Panel URL (e.g., https://panel.example.com): " PANEL_URL
+    echo ""
+    
+    # Get token
+    read -p "${CYAN}❯${NC} Node Token (ptla_xxx): " NODE_TOKEN
+    echo ""
+    
+    # Get node ID
+    read -p "${CYAN}❯${NC} Node ID (number): " NODE_ID
+    echo ""
+    
+    # Validate
+    if [ -z "$PANEL_URL" ] || [ -z "$NODE_TOKEN" ] || [ -z "$NODE_ID" ]; then
+        error "All fields are required!"
+    fi
+    
+    # Show summary
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}Deployment Summary:${NC}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo "  Panel URL: ${PANEL_URL}"
+    echo "  Token:     ${NODE_TOKEN:0:20}..."
+    echo "  Node ID:   ${NODE_ID}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    read -p "Deploy Wings with this configuration? (y/n): " confirm_deploy
+    if [ "$confirm_deploy" != "y" ] && [ "$confirm_deploy" != "Y" ]; then
+        echo -e "\n${YELLOW}Deployment cancelled.${NC}\n"
+        return
+    fi
+    
+    # Install Wings if not exists
+    if ! command -v wings &> /dev/null; then
+        echo -e "\n${YELLOW}Installing Wings...${NC}"
+        mkdir -p /usr/local/bin
+        curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/download/v1.11.8/wings_linux_amd64" &>/dev/null
+        chmod +x /usr/local/bin/wings
+        success "Wings installed"
+    fi
+    
+    # Create directories
+    mkdir -p /etc/pterodactyl
+    mkdir -p /var/log/pterodactyl
+    mkdir -p /var/lib/pterodactyl/volumes
+    
+    # Run wings configure command
+    echo -e "\n${CYAN}Deploying Wings...${NC}"
+    echo -e "${YELLOW}Command: wings configure --panel-url ${PANEL_URL} --token ${NODE_TOKEN:0:15}... --node ${NODE_ID}${NC}\n"
+    
+    cd /etc/pterodactyl
+    wings configure --panel-url "${PANEL_URL}" --token "${NODE_TOKEN}" --node "${NODE_ID}"
+    
+    if [ $? -eq 0 ]; then
+        success "Wings configured successfully!"
+        
+        echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+        echo -e "${GREEN}║${NC}  ${GREEN}✅ WINGS DEPLOYED SUCCESSFULLY!${NC}              ${GREEN}║${NC}"
+        echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+        echo ""
+        
+        # Start Wings
+        read -p "Start Wings now? (y/n): " start_now
+        if [ "$start_now" = "y" ] || [ "$start_now" = "Y" ]; then
+            echo -e "\n${CYAN}Starting Wings...${NC}"
+            
+            # Stop if running
+            if pgrep -x "wings" > /dev/null; then
+                pkill wings
+                sleep 2
+            fi
+            
+            # Start
+            nohup wings > /var/log/pterodactyl/wings.log 2>&1 &
+            WINGS_PID=$!
+            echo $WINGS_PID > /var/run/wings.pid
+            
+            sleep 3
+            
+            if pgrep -x "wings" > /dev/null; then
+                success "Wings started (PID: ${WINGS_PID})"
+                echo -e "\n${GREEN}🎉 Wings is now running and connected to Panel!${NC}"
+                echo ""
+                echo -e "${MAGENTA}Next Steps:${NC}"
+                echo "  1. Go to Panel: ${PANEL_URL}"
+                echo "  2. Navigate: Admin → Nodes"
+                echo "  3. Check for Connected (green dot)"
+                echo "  4. Start creating game servers!"
+            else
+                warn "Wings may not have started"
+                echo -e "\n${YELLOW}Check logs: tail -f /var/log/pterodactyl/wings.log${NC}"
+            fi
+        else
+            info "Start manually with: wings"
+        fi
+    else
+        error "Failed to configure Wings. Check token and node ID!"
     fi
 }
 
