@@ -56,6 +56,7 @@ bash <(curl -s https://satyam-bhaii.github.io/pterodactyl-installer/pterodactyl-
 | `panel` | Install Pterodactyl Panel only |
 | `wings` | Install Wings Daemon only |
 | `quick` | Quick setup (Panel + Wings together) |
+| `configure` | **NEW!** Auto-configure Wings with UUID/Token |
 | `uninstall` | Remove Pterodactyl completely |
 | `help` | Show help message |
 
@@ -65,11 +66,11 @@ bash <(curl -s https://satyam-bhaii.github.io/pterodactyl-installer/pterodactyl-
 # Install Panel only
 sudo ./pterodactyl-installer.sh panel
 
-# Install with custom credentials
-EMAIL=admin@example.com PASSWORD=MyPass123 sudo ./pterodactyl-installer.sh panel
-
-# Install Wings on separate node
+# Install Wings only
 sudo ./pterodactyl-installer.sh wings
+
+# Auto-configure Wings (NEW!)
+sudo ./pterodactyl-installer.sh configure
 
 # Quick setup everything
 sudo ./pterodactyl-installer.sh quick

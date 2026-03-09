@@ -53,27 +53,14 @@ GITHUB_REPO="https://github.com/Satyam-Bhaii/pterodactyl-installer"
 show_logo() {
     echo -e "${CYAN}"
     cat << "EOF"
+┏━┓┏━┓╺┳╸╻ ╻┏━┓┏┳┓   ┏┓ ╻ ╻┏━┓╻╻
+┗━┓┣━┫ ┃ ┗┳┛┣━┫┃┃┃   ┣┻┓┣━┫┣━┫┃┃
+┗━┛╹ ╹ ╹  ╹ ╹ ╹╹ ╹   ┗━┛╹ ╹╹ ╹╹╹
+
 ╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║     ██████╗  ██████╗ ██╗  ██╗   ██╗███████╗               ║
-║     ██╔══██╗██╔═══██╗██║  ██║   ██║██╔════╝               ║
-║     ██████╔╝██║   ██║██║  ██║   ██║█████╗                 ║
-║     ██╔═══╝ ██║   ██║██║  ╚██╗ ██╔╝██╔══╝                 ║
-║     ██║     ╚██████╔╝╚█████╔╚████╔╝ ███████╗              ║
-║     ╚═╝      ╚═════╝  ╚════╝  ╚═══╝  ╚══════╝              ║
-║                                                           ║
-║        ██████╗ ███████╗███╗   ██╗███████╗                 ║
-║       ██╔════╝ ██╔════╝████╗  ██║██╔════╝                 ║
-║       ██║  ███╗█████╗  ██╔██╗ ██║█████╗                   ║
-║       ██║   ██║██╔══╝  ██║╚██╗██║██╔══╝                   ║
-║       ╚██████╔╝███████╗██║ ╚████║███████╗                 ║
-║        ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝                 ║
-║                                                           ║
-║              Made by SATYAM BHAIi                         ║
-║              Pterodactyl Installer v${SCRIPT_VERSION}              ║
-║                                                           ║
-║   🌐 github.com/Satyam-Bhaii/pterodactyl-installer        ║
-║                                                           ║
+║     Made by SATYAM BHAIi - Pterodactyl Installer          ║
+║     Version: ${SCRIPT_VERSION}                                         ║
+║     GitHub: Satyam-Bhaii/pterodactyl-installer            ║
 ╚═══════════════════════════════════════════════════════════╝
 EOF
     echo -e "${NC}"
@@ -441,14 +428,192 @@ configure_wings() {
     echo -e "${BLUE}📋${NC} Wings Configuration..."
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
     
-    info "Wings configuration must be done via Panel:"
-    echo "  1. Login to Panel"
-    echo "  2. Go to Admin → Nodes"
-    echo "  3. Create new node"
-    echo "  4. Copy configuration from node settings"
-    echo "  5. Paste into /etc/pterodactyl/config.yml"
+    echo -e "${YELLOW}Select configuration method:${NC}"
     echo ""
-    info "Then run: wings --config /etc/pterodactyl/config.yml"
+    echo "  1) Auto Configure (Recommended) - Just enter details from Panel"
+    echo "  2) Manual Configure - Paste config.yml manually"
+    echo "  3) Skip - Configure later"
+    echo ""
+    read -p "Enter choice [1-3]: " config_choice
+    
+    case $config_choice in
+        1)
+            auto_configure_wings
+            ;;
+        2)
+            manual_configure_wings
+            ;;
+        3)
+            info "You can configure later by running: wings configure"
+            ;;
+        *)
+            error "Invalid option"
+            ;;
+    esac
+}
+
+# Auto Configure Wings
+auto_configure_wings() {
+    echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}🔧${NC} Auto Configure Wings..."
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+    
+    info "Get these details from Panel: Admin → Nodes → Your Node → Configuration"
+    echo ""
+    
+    # Get configuration details
+    read -p "Enter Panel URL (e.g., https://panel.example.com): " PANEL_URL
+    read -p "Enter Node UUID: " NODE_UUID
+    read -p "Enter Token ID: " TOKEN_ID
+    read -p "Enter Token (Secret): " TOKEN
+    read -p "Enter Wings API Port (default: 8080): " WINGS_PORT
+    WINGS_PORT=${WINGS_PORT:-8080}
+    read -p "Enter SFTP Port (default: 2022): " SFTP_PORT
+    SFTP_PORT=${SFTP_PORT:-2022}
+    
+    echo -e "\n${YELLOW}Configuring Wings...${NC}"
+    
+    # Create config directory
+    mkdir -p ${WINGS_DIR}
+    
+    # Generate config.yml
+    cat > ${WINGS_DIR}/config.yml << EOF
+debug: false
+uuid: ${NODE_UUID}
+token_id: ${TOKEN_ID}
+token: ${TOKEN}
+api:
+  host: 0.0.0.0
+  port: ${WINGS_PORT}
+  ssl:
+    enabled: false
+    cert: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+    key: /etc/letsencrypt/live/yourdomain.com/privkey.pem
+system:
+  data: /var/lib/pterodactyl/volumes
+  sftp:
+    bind_port: ${SFTP_PORT}
+allowed_mounts: []
+remote: ${PANEL_URL}
+internal:
+  dns:
+    - 1.1.1.1
+    - 1.0.0.1
+  network:
+    ispn_interface: eth0
+    interfaces:
+      - veth
+      - v4
+      - nat
+      - host
+docker:
+  network:
+    interface: 172.18.0.1
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    name: pterodactyl_nw
+    ispn: false
+    driver: bridge
+    network_mode: bridge
+    network: pterodactyl_nw
+    ispn_network: pterodactyl_ispn
+    ispn_driver: bridge
+    auto_detect_interface: true
+    bind:
+      - 172.18.0.1/16
+EOF
+    
+    success "Configuration saved to ${WINGS_DIR}/config.yml"
+    
+    # Set permissions
+    chmod 600 ${WINGS_DIR}/config.yml
+    
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║   ✅ WINGS CONFIGURED SUCCESSFULLY!           ║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}\n"
+    
+    info "Node UUID: ${NODE_UUID}"
+    info "Panel URL: ${PANEL_URL}"
+    info "API Port: ${WINGS_PORT}"
+    info "SFTP Port: ${SFTP_PORT}"
+    
+    echo -e "\n${YELLOW}Starting Wings...${NC}"
+    read -p "Do you want to start Wings now? (y/n): " start_wings
+    
+    if [ "$start_wings" = "y" ] || [ "$start_wings" = "Y" ]; then
+        echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BLUE}▶️${NC} Starting Wings Daemon..."
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+        
+        # Start Wings in background
+        nohup wings > /var/log/pterodactyl/wings.log 2>&1 &
+        WINGS_PID=$!
+        echo $WINGS_PID > /var/run/wings.pid
+        
+        success "Wings started (PID: ${WINGS_PID})"
+        info "Logs: tail -f /var/log/pterodactyl/wings.log"
+        
+        echo -e "\n${GREEN}🎉 Wings is now running and connected to Panel!${NC}"
+        echo -e "${GREEN}📋 Check Panel - Node status should show as 'Connected'${NC}"
+    else
+        info "You can start Wings manually with: wings"
+    fi
+}
+
+# Manual Configure Wings
+manual_configure_wings() {
+    echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}📋${NC} Manual Configuration..."
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+    
+    info "Steps to configure manually:"
+    echo ""
+    echo "  1. Login to Pterodactyl Panel"
+    echo "  2. Go to Admin → Nodes"
+    echo "  3. Click on your node"
+    echo "  4. Go to Configuration tab"
+    echo "  5. Click 'Copy' to copy config.yml"
+    echo "  6. Paste it when prompted below"
+    echo ""
+    
+    read -p "Press Enter when ready to paste configuration..."
+    
+    # Create config directory
+    mkdir -p ${WINGS_DIR}
+    
+    echo -e "\n${YELLOW}Paste your config.yml content below (Ctrl+D to save):${NC}"
+    echo "---START PASTING---"
+    
+    # Read input until Ctrl+D
+    cat > ${WINGS_DIR}/config.yml
+    
+    # Verify config
+    if [ -f "${WINGS_DIR}/config.yml" ] && [ -s "${WINGS_DIR}/config.yml" ]; then
+        success "Configuration saved to ${WINGS_DIR}/config.yml"
+        chmod 600 ${WINGS_DIR}/config.yml
+        
+        echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+        echo -e "${GREEN}║   ✅ CONFIGURATION SAVED!                     ║${NC}"
+        echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}\n"
+        
+        read -p "Do you want to start Wings now? (y/n): " start_wings
+        
+        if [ "$start_wings" = "y" ] || [ "$start_wings" = "Y" ]; then
+            echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo -e "${BLUE}▶️${NC} Starting Wings Daemon..."
+            echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+            
+            nohup wings > /var/log/pterodactyl/wings.log 2>&1 &
+            WINGS_PID=$!
+            echo $WINGS_PID > /var/run/wings.pid
+            
+            success "Wings started (PID: ${WINGS_PID})"
+            info "Logs: tail -f /var/log/pterodactyl/wings.log"
+        fi
+    else
+        error "Configuration file is empty or invalid"
+    fi
 }
 
 # Save credentials
@@ -644,6 +809,7 @@ show_help() {
     echo "  panel          - Install Pterodactyl Panel only"
     echo "  wings          - Install Wings Daemon only"
     echo "  quick          - Quick setup (Panel + Wings)"
+    echo "  configure      - Auto-configure Wings (enter UUID, Token, etc.)"
     echo "  uninstall      - Remove Pterodactyl"
     echo "  help           - Show this help message"
     echo ""
@@ -657,6 +823,7 @@ show_help() {
     echo "  $0 panel"
     echo "  EMAIL=admin@example.com PASSWORD=MyPass123 $0 panel"
     echo "  $0 wings"
+    echo "  $0 configure     # Auto-configure Wings with UUID/Token"
     echo "  $0 quick"
     echo ""
     echo -e "${CYAN}🌐 GitHub:${NC} ${GITHUB_REPO}"
@@ -667,23 +834,25 @@ show_help() {
 # Main menu
 main_menu() {
     show_logo
-    
+
     echo -e "${YELLOW}Select an option:${NC}"
     echo ""
     echo "  1) Install Pterodactyl Panel"
     echo "  2) Install Wings Daemon"
     echo "  3) Quick Setup (Panel + Wings)"
-    echo "  4) Uninstall Pterodactyl"
-    echo "  5) Exit"
+    echo "  4) Auto-Configure Wings (Enter UUID, Token, etc.)"
+    echo "  5) Uninstall Pterodactyl"
+    echo "  6) Exit"
     echo ""
-    read -p "Enter choice [1-5]: " choice
-    
+    read -p "Enter choice [1-6]: " choice
+
     case $choice in
         1) install_panel ;;
         2) install_wings_only ;;
         3) quick_setup ;;
-        4) uninstall ;;
-        5) exit 0 ;;
+        4) auto_configure_wings ;;
+        5) uninstall ;;
+        6) exit 0 ;;
         *) error "Invalid option" ;;
     esac
 }
@@ -698,6 +867,13 @@ case "${1:-menu}" in
         ;;
     quick)
         quick_setup
+        ;;
+    configure)
+        show_logo
+        echo -e "${YELLOW}Starting Wings Auto-Configuration...${NC}\n"
+        check_root
+        install_wings
+        auto_configure_wings
         ;;
     uninstall)
         uninstall
