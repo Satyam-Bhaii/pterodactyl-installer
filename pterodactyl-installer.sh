@@ -53,28 +53,28 @@ GITHUB_REPO="https://github.com/Satyam-Bhaii/pterodactyl-installer"
 show_logo() {
     echo -e "${CYAN}"
     echo ""
-    echo -e "    ${WHITE}╔═══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "    ${WHITE}║${NC}                                                       ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╔═══╗${NC}           ${CYAN}╔═══╗${NC}                           ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}║ ║ ║${NC}  ${WHITE}╻ ╻${NC}  ${CYAN}╔═╗${NC} ${CYAN}║ ║ ║${NC} ${CYAN}╔╦╗${NC}  ${CYAN}╔╗${NC} ${CYAN}╻ ╻╔═╗╻╻${NC}          ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╚═╗ ║${NC}  ${WHITE}┗┳┛${NC}  ${CYAN}║ ║${NC} ${CYAN}╚═╗ ║${NC} ${CYAN}║║║${NC}  ${CYAN}╠╩╗${NC} ${CYAN}┣━┫┣━┫┃┃${NC}          ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╚══╝${NC}   ${WHITE}╹${NC}   ${CYAN}╚═╝${NC} ${CYAN}╚══╝${NC} ${CYAN}╹ ╹${NC}  ${CYAN}╚═╝${NC} ${CYAN}╹ ╹╹ ╹╹╹${NC}          ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                       ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}╔═╗╔═╗╦  ╔═╗╔═╗╔╦╗  ╔═╗╦═╗╦╔╦╗${NC}                  ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}║ ║║ ║║  ╠═╝╠═╣ ║   ╠═╝╠╦╝║║║║${NC}                  ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}╚═╝╚═╝╩  ╩  ╩ ╩ ╩   ╩  ╩╚═╩╩ ╩${NC}                  ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                       ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}         ${GREEN}✨ Fully Automatic Configuration ✨${NC}            ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                       ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${MAGENTA}Made by SATYAM BHAIi${NC}                              ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${BLUE}Version: ${SCRIPT_VERSION}${NC}                                        ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${WHITE}github.com/Satyam-Bhaii/pterodactyl-installer${NC}      ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                       ${WHITE}║${NC}"
-    echo -e "    ${WHITE}╚═══════════════════════════════════════════════════════════╝${NC}"
+    echo -e "    ${WHITE}╔════════════════════════════════════════════════════════╗${NC}"
+    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${CYAN}╔═══╗${NC}           ${CYAN}╔═══╗${NC}                         ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${CYAN}║ ║ ║${NC}  ${WHITE}╻ ╻${NC}  ${CYAN}╔═╗${NC} ${CYAN}║ ║ ║${NC} ${CYAN}╔╦╗${NC}  ${CYAN}╔╗${NC} ${CYAN}╻ ╻╔═╗╻╻${NC}        ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${CYAN}╚═╗ ║${NC}  ${WHITE}┗┳┛${NC}  ${CYAN}║ ║${NC} ${CYAN}╚═╗ ║${NC} ${CYAN}║║║${NC}  ${CYAN}╠╩╗${NC} ${CYAN}┣━┫┣━┫┃┃${NC}        ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${CYAN}╚══╝${NC}   ${WHITE}╹${NC}   ${CYAN}╚═╝${NC} ${CYAN}╚══╝${NC} ${CYAN}╹ ╹${NC}  ${CYAN}╚═╝${NC} ${CYAN}╹ ╹╹ ╹╹╹${NC}        ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${YELLOW}╔═╗╔═╗╦  ╔═╗╔═╗╔╦╗  ╔═╗╦═╗╦╔╦╗${NC}                ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${YELLOW}║ ║║ ║║  ╠═╝╠═╣ ║   ╠═╝╠╦╝║║║║${NC}                ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}     ${YELLOW}╚═╝╚═╝╩  ╩  ╩ ╩ ╩   ╩  ╩╚═╩╩ ╩${NC}                ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}       ${GREEN}✨ Fully Automatic Configuration ✨${NC}          ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}       ${MAGENTA}Made by SATYAM BHAIi${NC}                        ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}       ${BLUE}Version: ${SCRIPT_VERSION}${NC}                                  ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}       ${WHITE}github.com/Satyam-Bhaii/pterodactyl-installer${NC}  ${WHITE}║${NC}"
+    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "    ${WHITE}╚════════════════════════════════════════════════════════╝${NC}"
     echo ""
-    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${YELLOW}  The Ultimate Pterodactyl Installer${NC}"
-    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "    ${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "    ${YELLOW}The Ultimate Pterodactyl Installer${NC}"
+    echo -e "    ${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
 }
 
@@ -973,22 +973,35 @@ show_help() {
 main_menu() {
     show_logo
 
-    echo -e "${WHITE}╔═══════════════════════════════════════════════╗${NC}"
-    echo -e "${WHITE}║${NC}  ${YELLOW}🎯${NC} ${BLUE}Select an Option${NC}                              ${WHITE}║${NC}"
-    echo -e "${WHITE}╠═══════════════════════════════════════════════╣${NC}"
-    echo -e "${WHITE}║${NC}                                           ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}1${NC}) ${CYAN}Install Pterodactyl Panel${NC}                  ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}2${NC}) ${CYAN}Install Wings Daemon${NC}                     ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}3${NC}) ${CYAN}Quick Setup (Panel + Wings)${NC}              ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}4${NC}) ${YELLOW}⭐ Auto-Configure Wings${NC} (Recommended)   ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}5${NC}) ${RED}Uninstall Pterodactyl${NC}                    ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}0${NC}) ${WHITE}Exit${NC}                                    ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}                                           ${WHITE}║${NC}"
-    echo -e "${WHITE}╚═══════════════════════════════════════════════╝${NC}"
+    echo -e "${WHITE}╔════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${WHITE}║${NC}  ${YELLOW}🎯${NC} ${BLUE}Select an Option${NC}                                   ${WHITE}║${NC}"
+    echo -e "${WHITE}╠════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}1${NC}) ${CYAN}Install Pterodactyl Panel${NC}                       ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}2${NC}) ${CYAN}Install Wings Daemon${NC}                          ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}3${NC}) ${CYAN}Quick Setup (Panel + Wings)${NC}                 ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}4${NC}) ${YELLOW}⭐ Auto-Configure Wings${NC} (Recommended)        ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}5${NC}) ${RED}Uninstall Pterodactyl${NC}                       ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}  ${GREEN}0${NC}) ${WHITE}Exit${NC}                                       ${WHITE}║${NC}"
+    echo -e "${WHITE}║${NC}                                                    ${WHITE}║${NC}"
+    echo -e "${WHITE}╚════════════════════════════════════════════════════════╝${NC}"
     echo ""
     
-    read -p "  ${CYAN}❯${NC} ${YELLOW}Enter your choice${NC} [${WHITE}0-5${NC}]: ${WHITE}" choice
-    echo -e "${NC}"
+    # Read with proper handling
+    while true; do
+        read -p "  ${CYAN}❯${NC} ${YELLOW}Enter your choice${NC} [${WHITE}0-5${NC}]: ${WHITE}" choice
+        echo -e "${NC}"
+        
+        # Validate input
+        case $choice in
+            0|1|2|3|4|5)
+                break
+                ;;
+            *)
+                echo -e "  ${RED}❌ Invalid option. Please enter 0-5.${NC}\n"
+                ;;
+        esac
+    done
 
     case $choice in
         1) install_panel ;;
@@ -997,7 +1010,6 @@ main_menu() {
         4) auto_configure_wings ;;
         5) uninstall ;;
         0) echo -e "\n  ${GREEN}👋 Goodbye! Thanks for using!${NC}\n"; exit 0 ;;
-        *) echo -e "\n  ${RED}❌ Invalid option. Please select 0-5.${NC}\n"; main_menu ;;
     esac
 }
 
