@@ -16,24 +16,35 @@
  ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝
 ```
 
-**Made by SATYAM BHAIi** | Version: 2.0
+**Made by SATYAM BHAIi** | Version: 3.0
+
+[![GitHub stars](https://img.shields.io/github/stars/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/network)
+[![GitHub issues](https://img.shields.io/github/issues/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/issues)
+[![License](https://img.shields.io/github/license/Satyam-Bhaii/pterodactyl-installer?style=for-the-badge)](https://github.com/Satyam-Bhaii/pterodactyl-installer/blob/main/LICENSE)
 
 ---
 
 ## 🚀 Quick Install
 
-Single command se install karo:
+### 🔥 One-Command Installation
 
 ```bash
-bash <(curl -s https://YOUR-URL-HERE/pterodactyl-installer.sh)
+bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh)
 ```
 
-Ya download karke run karo:
+### 📥 Download & Install
 
 ```bash
-wget https://YOUR-URL-HERE/pterodactyl-installer.sh
+wget https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh
 chmod +x pterodactyl-installer.sh
-./pterodactyl-installer.sh
+sudo ./pterodactyl-installer.sh
+```
+
+### 🌐 GitHub Pages URL (Jab enable ho)
+
+```bash
+bash <(curl -s https://satyam-bhaii.github.io/pterodactyl-installer/pterodactyl-installer.sh)
 ```
 
 ---
@@ -52,19 +63,22 @@ chmod +x pterodactyl-installer.sh
 
 ```bash
 # Install Panel only
-./pterodactyl-installer.sh panel
+sudo ./pterodactyl-installer.sh panel
 
 # Install with custom credentials
-EMAIL=admin@example.com PASSWORD=MyPass123 ./pterodactyl-installer.sh panel
+EMAIL=admin@example.com PASSWORD=MyPass123 sudo ./pterodactyl-installer.sh panel
 
 # Install Wings on separate node
-./pterodactyl-installer.sh wings
+sudo ./pterodactyl-installer.sh wings
 
 # Quick setup everything
-./pterodactyl-installer.sh quick
+sudo ./pterodactyl-installer.sh quick
 
 # Uninstall
-./pterodactyl-installer.sh uninstall
+sudo ./pterodactyl-installer.sh uninstall
+
+# Show help
+./pterodactyl-installer.sh help
 ```
 
 ---

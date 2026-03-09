@@ -1,0 +1,33 @@
+# Ignore common backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore credentials (IMPORTANT!)
+pterodactyl_credentials.txt
+credentials.txt
+*.key
+*.pem
+
+# Ignore temporary files
+/tmp/
+*.tmp
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore node modules (if any)
+node_modules/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
