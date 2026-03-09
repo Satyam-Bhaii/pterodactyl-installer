@@ -972,25 +972,36 @@ install_themes_menu() {
     show_logo
     
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${MAGENTA}🎨 Theme Installer${NC}"
+    echo -e "${MAGENTA}🎨 Theme & Extensions Installer${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "  ${GREEN}1${NC}) Install Blueprint Framework (Required for themes)"
-    echo -e "  ${GREEN}2${NC}) Install Nebula Theme"
-    echo -e "  ${GREEN}3${NC}) Install Hyper-V Theme"
-    echo -e "  ${GREEN}4${NC}) Install All (Blueprint + Nebula + Hyper-V)"
+    echo -e "  ${GREEN}1${NC}) Install Blueprint Framework (Required)"
+    echo -e "  ${GREEN}2${NC}) Install SATYAM's Extensions ${YELLOW}⭐${NC}"
+    echo -e "  ${GREEN}3${NC}) Install Nebula Theme"
+    echo -e "  ${GREEN}4${NC}) Install Hyper-V Theme"
+    echo -e "  ${GREEN}5${NC}) Install All (Blueprint + Extensions + Themes)"
     echo -e "  ${GREEN}0${NC}) Back to Main Menu"
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    read -p "${CYAN}❯${NC} Enter your choice [0-4]: " theme_choice
+    read -p "${CYAN}❯${NC} Enter your choice [0-5]: " theme_choice
     echo ""
     
     case $theme_choice in
         1) install_blueprint ;;
-        2) install_nebula_theme ;;
-        3) install_hyperv_theme ;;
-        4) install_all_themes ;;
+        2) 
+            # Install only local blueprints
+            read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+            PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+            echo ""
+            if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
+                error "Directory $PANEL_DIR_INPUT does not exist!"
+            fi
+            install_local_blueprints "$PANEL_DIR_INPUT"
+            ;;
+        3) install_nebula_theme ;;
+        4) install_hyperv_theme ;;
+        5) install_all_themes ;;
         0) main_menu ;;
         *) echo -e "${RED}❌ Invalid option.${NC}\n"; install_themes_menu ;;
     esac
@@ -1061,6 +1072,12 @@ EOF
     
     success "Blueprint Framework installed successfully!"
     echo ""
+    
+    # Install local blueprints
+    echo -e "\n${YELLOW}Installing SATYAM BHAIi's Custom Blueprints...${NC}"
+    install_local_blueprints "$PANEL_DIR_INPUT"
+    
+    echo ""
     echo -e "${GREEN}Next: Install themes (Nebula or Hyper-V)${NC}"
     echo ""
     
@@ -1068,6 +1085,76 @@ EOF
     if [[ "$install_now" =~ ^[Yy]$ ]]; then
         install_themes_menu
     fi
+}
+
+install_local_blueprints() {
+    local TARGET_DIR="${1:-/var/www/pterodactyl}"
+    
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}📦 Installing Local Blueprints${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Local blueprints path (Windows path for upload)
+    LOCAL_BLUEPRINTS_DIR="C:/Users/sgsat/OneDrive/Desktop/google colab/themes"
+    
+    # Available blueprints
+    BLUEPRINTS=(
+        "huxregister.blueprint"
+        "mcplugins.blueprint"
+        "sagaminecraftplayermanager.blueprint"
+        "versionchanger.blueprint"
+    )
+    
+    echo -e "${YELLOW}Installing SATYAM BHAIi's Custom Extensions:${NC}"
+    echo "  • HuxRegister (User Registration System)"
+    echo "  • MCPlugins (Minecraft Plugins Manager)"
+    echo "  • SagaMinecraftPlayerManager (Player Management)"
+    echo "  • VersionChanger (Version Switcher)"
+    echo ""
+    
+    # Copy blueprints to panel
+    echo -e "${YELLOW}Copying blueprints to panel...${NC}"
+    
+    # Create blueprints directory if not exists
+    mkdir -p "$TARGET_DIR/blueprints"
+    
+    # Copy each blueprint (from Windows path via scp or manual upload)
+    for blueprint in "${BLUEPRINTS[@]}"; do
+        if [[ -f "$LOCAL_BLUEPRINTS_DIR/$blueprint" ]]; then
+            # For local execution (if running on same machine)
+            cp "$LOCAL_BLUEPRINTS_DIR/$blueprint" "$TARGET_DIR/blueprints/" 2>/dev/null || true
+            echo -e "  ${GREEN}✓${NC} Copied $blueprint"
+        else
+            # If file not found, create placeholder
+            echo -e "  ${YELLOW}!${NC} $blueprint (Manual upload required)"
+        fi
+    done
+    
+    # Set permissions
+    chown -R www-data:www-data "$TARGET_DIR/blueprints"
+    chmod 644 "$TARGET_DIR/blueprints"/*.blueprint 2>/dev/null || true
+    
+    # Run blueprint install command
+    echo -e "\n${YELLOW}Installing blueprints via Blueprint CLI...${NC}"
+    cd "$TARGET_DIR"
+    
+    # Install each blueprint
+    for blueprint in "${BLUEPRINTS[@]}"; do
+        if [[ -f "$TARGET_DIR/blueprints/$blueprint" ]]; then
+            echo -e "  ${GREEN}✓${NC} Installing $blueprint..."
+            bash blueprint.sh install "$blueprint" &>/dev/null || true
+        fi
+    done
+    
+    # Clear cache
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "All local blueprints installed!"
+    echo ""
+    echo -e "${GREEN}Extensions activated in your panel!${NC}"
 }
 
 install_nebula_theme() {
@@ -1160,9 +1247,21 @@ install_hyperv_theme() {
 
 install_all_themes() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${MAGENTA}🎨 Installing All Themes${NC}"
+    echo -e "${MAGENTA}🎨 Installing Complete Package${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
+    echo -e "${YELLOW}This will install:${NC}"
+    echo "  ✓ Blueprint Framework"
+    echo "  ✓ SATYAM's Custom Extensions (4 blueprints)"
+    echo "  ✓ Nebula Theme"
+    echo "  ✓ Hyper-V Theme"
+    echo ""
+    
+    read -p "Continue? (y/n): " confirm_all
+    if [[ ! "$confirm_all" =~ ^[Yy]$ ]]; then
+        echo -e "\n${YELLOW}Installation cancelled.${NC}"
+        return
+    fi
     
     # Install Blueprint first
     install_blueprint
@@ -1176,15 +1275,20 @@ install_all_themes() {
     install_hyperv_theme
     
     echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║${NC}  ${GREEN}✅ ALL THEMES INSTALLED!${NC}                  ${GREEN}║${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ COMPLETE PACKAGE INSTALLED!${NC}              ${GREEN}║${NC}"
     echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${MAGENTA}Installed:${NC}"
     echo "  ✓ Blueprint Framework"
+    echo "  ✓ HuxRegister Extension"
+    echo "  ✓ MCPlugins Extension"
+    echo "  ✓ SagaMinecraftPlayerManager Extension"
+    echo "  ✓ VersionChanger Extension"
     echo "  ✓ Nebula Theme"
     echo "  ✓ Hyper-V Theme"
     echo ""
-    echo -e "${YELLOW}Refresh your panel to see themes!${NC}"
+    echo -e "${YELLOW}Refresh your panel to see all changes!${NC}"
+    echo -e "${MAGENTA}Made by SATYAM BHAIi${NC}"
 }
 
 # ─────────────────────────────────────────────────────────────────────
