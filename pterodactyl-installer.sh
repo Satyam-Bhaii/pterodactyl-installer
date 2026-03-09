@@ -650,38 +650,27 @@ onecommand_deploy_wings() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     
-    info "Get token from Panel: Admin → Nodes → Click Node → Copy Token"
-    echo -e "${YELLOW}💡 This will configure Wings with a single command!${NC}\n"
+    info "Get command from Panel: Admin → Nodes → Click Node → Copy Configuration Command"
+    echo -e "${YELLOW}💡 Just paste the full command from panel!${NC}\n"
+    echo -e "${YELLOW}Example: wings configure --panel-url https://panel.com --token ptla_xxx --node 1${NC}\n"
     
-    # Get panel URL
-    read -p "${CYAN}❯${NC} Panel URL (e.g., https://panel.example.com): " PANEL_URL
+    read -p "${CYAN}❯${NC} Paste the configuration command: " WINGS_COMMAND
     echo ""
     
-    # Get token
-    read -p "${CYAN}❯${NC} Node Token (ptla_xxx): " NODE_TOKEN
-    echo ""
-    
-    # Get node ID
-    read -p "${CYAN}❯${NC} Node ID (number): " NODE_ID
-    echo ""
-    
-    # Validate
-    if [ -z "$PANEL_URL" ] || [ -z "$NODE_TOKEN" ] || [ -z "$NODE_ID" ]; then
-        error "All fields are required!"
+    if [ -z "$WINGS_COMMAND" ]; then
+        error "Command is required!"
     fi
     
     # Show summary
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${BLUE}Deployment Summary:${NC}"
+    echo -e "${BLUE}Command Summary:${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo "  Panel URL: ${PANEL_URL}"
-    echo "  Token:     ${NODE_TOKEN:0:20}..."
-    echo "  Node ID:   ${NODE_ID}"
+    echo "  Command: ${WINGS_COMMAND:0:80}..."
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     
-    read -p "Deploy Wings with this configuration? (y/n): " confirm_deploy
-    if [ "$confirm_deploy" != "y" ] && [ "$confirm_deploy" != "Y" ]; then
+    read -p "Execute this command? (y/n): " confirm_exec
+    if [ "$confirm_exec" != "y" ] && [ "$confirm_exec" != "Y" ]; then
         echo -e "\n${YELLOW}Deployment cancelled.${NC}\n"
         return
     fi
@@ -700,12 +689,12 @@ onecommand_deploy_wings() {
     mkdir -p /var/log/pterodactyl
     mkdir -p /var/lib/pterodactyl/volumes
     
-    # Run wings configure command
-    echo -e "\n${CYAN}Deploying Wings...${NC}"
-    echo -e "${YELLOW}Command: wings configure --panel-url ${PANEL_URL} --token ${NODE_TOKEN:0:15}... --node ${NODE_ID}${NC}\n"
+    # Execute the command
+    echo -e "\n${CYAN}Executing command...${NC}"
+    echo -e "${YELLOW}Running: ${WINGS_COMMAND}${NC}\n"
     
     cd /etc/pterodactyl
-    wings configure --panel-url "${PANEL_URL}" --token "${NODE_TOKEN}" --node "${NODE_ID}"
+    eval "$WINGS_COMMAND"
     
     if [ $? -eq 0 ]; then
         success "Wings configured successfully!"
@@ -715,42 +704,49 @@ onecommand_deploy_wings() {
         echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
         echo ""
         
-        # Start Wings
-        read -p "Start Wings now? (y/n): " start_now
-        if [ "$start_now" = "y" ] || [ "$start_now" = "Y" ]; then
-            echo -e "\n${CYAN}Starting Wings...${NC}"
-            
-            # Stop if running
-            if pgrep -x "wings" > /dev/null; then
-                pkill wings
-                sleep 2
-            fi
-            
-            # Start
-            nohup wings > /var/log/pterodactyl/wings.log 2>&1 &
-            WINGS_PID=$!
-            echo $WINGS_PID > /var/run/wings.pid
-            
-            sleep 3
-            
-            if pgrep -x "wings" > /dev/null; then
-                success "Wings started (PID: ${WINGS_PID})"
-                echo -e "\n${GREEN}🎉 Wings is now running and connected to Panel!${NC}"
-                echo ""
-                echo -e "${MAGENTA}Next Steps:${NC}"
-                echo "  1. Go to Panel: ${PANEL_URL}"
-                echo "  2. Navigate: Admin → Nodes"
-                echo "  3. Check for Connected (green dot)"
-                echo "  4. Start creating game servers!"
-            else
-                warn "Wings may not have started"
-                echo -e "\n${YELLOW}Check logs: tail -f /var/log/pterodactyl/wings.log${NC}"
-            fi
+        # Auto-start Wings
+        echo -e "${CYAN}Starting Wings automatically...${NC}"
+        
+        # Stop if running
+        if pgrep -x "wings" > /dev/null; then
+            pkill wings
+            sleep 2
+        fi
+        
+        # Start
+        nohup wings > /var/log/pterodactyl/wings.log 2>&1 &
+        WINGS_PID=$!
+        echo $WINGS_PID > /var/run/wings.pid
+        
+        sleep 3
+        
+        if pgrep -x "wings" > /dev/null; then
+            success "Wings started (PID: ${WINGS_PID})"
+            echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║${NC}  ${GREEN}🎉 WINGS IS NOW RUNNING!${NC}                  ${GREEN}║${NC}"
+            echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+            echo ""
+            echo -e "${MAGENTA}Status:${NC}"
+            echo "  ✓ Wings configured"
+            echo "  ✓ Wings started"
+            echo "  ✓ Connected to Panel"
+            echo ""
+            echo -e "${MAGENTA}Next Steps:${NC}"
+            echo "  1. Go to your Panel"
+            echo "  2. Navigate: Admin → Nodes"
+            echo "  3. Check for ${GREEN}● Connected${NC} (green dot)"
+            echo "  4. Start creating game servers!"
+            echo ""
+            echo -e "${MAGENTA}Useful Commands:${NC}"
+            echo "  View logs:    tail -f /var/log/pterodactyl/wings.log"
+            echo "  Stop Wings:   pkill wings"
+            echo "  Check status: ps aux | grep wings"
         else
-            info "Start manually with: wings"
+            warn "Wings may not have started"
+            echo -e "\n${YELLOW}Check logs: tail -f /var/log/pterodactyl/wings.log${NC}"
         fi
     else
-        error "Failed to configure Wings. Check token and node ID!"
+        error "Failed to configure Wings. Check your command!"
     fi
 }
 
