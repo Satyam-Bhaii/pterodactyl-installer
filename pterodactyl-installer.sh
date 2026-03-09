@@ -53,58 +53,41 @@ GITHUB_REPO="https://github.com/Satyam-Bhaii/pterodactyl-installer"
 show_logo() {
     echo -e "${CYAN}"
     echo ""
-    echo -e "    ${WHITE}╔════════════════════════════════════════════════════════╗${NC}"
-    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╔═══╗${NC}           ${CYAN}╔═══╗${NC}                         ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}║ ║ ║${NC}  ${WHITE}╻ ╻${NC}  ${CYAN}╔═╗${NC} ${CYAN}║ ║ ║${NC} ${CYAN}╔╦╗${NC}  ${CYAN}╔╗${NC} ${CYAN}╻ ╻╔═╗╻╻${NC}        ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╚═╗ ║${NC}  ${WHITE}┗┳┛${NC}  ${CYAN}║ ║${NC} ${CYAN}╚═╗ ║${NC} ${CYAN}║║║${NC}  ${CYAN}╠╩╗${NC} ${CYAN}┣━┫┣━┫┃┃${NC}        ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${CYAN}╚══╝${NC}   ${WHITE}╹${NC}   ${CYAN}╚═╝${NC} ${CYAN}╚══╝${NC} ${CYAN}╹ ╹${NC}  ${CYAN}╚═╝${NC} ${CYAN}╹ ╹╹ ╹╹╹${NC}        ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}╔═╗╔═╗╦  ╔═╗╔═╗╔╦╗  ╔═╗╦═╗╦╔╦╗${NC}                ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}║ ║║ ║║  ╠═╝╠═╣ ║   ╠═╝╠╦╝║║║║${NC}                ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}     ${YELLOW}╚═╝╚═╝╩  ╩  ╩ ╩ ╩   ╩  ╩╚═╩╩ ╩${NC}                ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}       ${GREEN}✨ Fully Automatic Configuration ✨${NC}          ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}       ${MAGENTA}Made by SATYAM BHAIi${NC}                        ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}       ${BLUE}Version: ${SCRIPT_VERSION}${NC}                                  ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}       ${WHITE}github.com/Satyam-Bhaii/pterodactyl-installer${NC}  ${WHITE}║${NC}"
-    echo -e "    ${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "    ${WHITE}╚════════════════════════════════════════════════════════╝${NC}"
+    echo "┏━┓┏━┓╺┳╸╻ ╻┏━┓┏┳┓   ┏┓ ╻ ╻┏━┓╻╻"
+    echo "┗━┓┣━┫ ┃ ┗┳┛┣━┫┃┃┃   ┣┻┓┣━┫┣━┫┃┃"
+    echo "┗━┛╹ ╹ ╹  ╹ ╹ ╹╹ ╹   ┗━┛╹ ╹╹ ╹╹╹"
     echo ""
-    echo -e "    ${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "    ${YELLOW}The Ultimate Pterodactyl Installer${NC}"
-    echo -e "    ${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo "╔═══════════════════════════════════════════════════════════╗"
+    echo "║     Made by SATYAM BHAIi - Pterodactyl Installer          ║"
+    echo "║     Version: ${SCRIPT_VERSION}                                          ║"
+    echo "║     GitHub: Satyam-Bhaii/pterodactyl-installer            ║"
+    echo "╚═══════════════════════════════════════════════════════════╝"
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${YELLOW}  The Ultimate Pterodactyl Installer${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
 }
 
 # Success message
 success() {
-    echo -e "${GREEN}╭────────────────────────────────────────────╮${NC}"
-    echo -e "${GREEN}│${NC}  ${GREEN}✓${NC} $1"
-    echo -e "${GREEN}╰────────────────────────────────────────────╯${NC}"
+    echo -e "${GREEN}✓${NC} $1"
 }
 
 # Error message
 error() {
-    echo -e "${RED}╭────────────────────────────────────────────╮${NC}"
-    echo -e "${RED}│${NC}  ${RED}✗${NC} $1"
-    echo -e "${RED}╰────────────────────────────────────────────╯${NC}"
+    echo -e "${RED}✗${NC} $1"
     exit 1
 }
 
 # Warning message
 warn() {
-    echo -e "${YELLOW}╭────────────────────────────────────────────╮${NC}"
-    echo -e "${YELLOW}│${NC}  ${YELLOW}!${NC} $1"
-    echo -e "${YELLOW}╰────────────────────────────────────────────╯${NC}"
+    echo -e "${YELLOW}!${NC} $1"
 }
 
 # Info message
 info() {
-    echo -e "${BLUE}╭────────────────────────────────────────────╮${NC}"
-    echo -e "${BLUE}│${NC}  ${BLUE}ℹ${NC} $1"
-    echo -e "${BLUE}╰────────────────────────────────────────────╯${NC}"
+    echo -e "${BLUE}ℹ${NC} $1"
 }
 
 # Check if running as root
@@ -474,76 +457,55 @@ configure_wings() {
 
 # Auto Configure Wings
 auto_configure_wings() {
-    echo -e ""
-    echo -e "${WHITE}╔═══════════════════════════════════════════════╗${NC}"
-    echo -e "${WHITE}║${NC}  ${YELLOW}🔧${NC} ${BLUE}Auto Configure Wings${NC}                      ${WHITE}║${NC}"
-    echo -e "${WHITE}╚═══════════════════════════════════════════════╝${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}🔧 Auto Configure Wings${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     
-    info "Get details from Panel: ${YELLOW}Admin → Nodes → Your Node → Configuration${NC}"
-    echo -e "${MAGENTA}💡 Tip:${NC} Open Panel in another tab and copy-paste!${NC}\n"
+    info "Get details from Panel: Admin → Nodes → Your Node → Configuration"
+    echo -e "${YELLOW}💡 Tip: Open Panel in another tab and copy-paste!${NC}\n"
     
-    # Input section with modern UI
-    echo -e "${WHITE}┌───────────────────────────────────────────────┐${NC}"
-    echo -e "${WHITE}│${NC}  ${CYAN}📝 Enter Configuration Details${NC}              ${WHITE}│${NC}"
-    echo -e "${WHITE}└───────────────────────────────────────────────┘${NC}"
-    echo ""
+    # Get configuration details
+    read -p "${CYAN}❯${NC} Panel URL (e.g., https://panel.example.com): " PANEL_URL
+    read -p "${CYAN}❯${NC} Node UUID: " NODE_UUID
+    read -p "${CYAN}❯${NC} Token ID: " TOKEN_ID
+    read -p "${CYAN}❯${NC} Token (Secret): " TOKEN
     
-    read -p "  ${CYAN}❯${NC} ${YELLOW}Panel URL${NC} (e.g., https://panel.example.com): ${WHITE}" PANEL_URL
-    echo -e "${NC}"
-    
-    read -p "  ${CYAN}❯${NC} ${YELLOW}Node UUID${NC}      : ${WHITE}" NODE_UUID
-    echo -e "${NC}"
-    
-    read -p "  ${CYAN}❯${NC} ${YELLOW}Token ID${NC}       : ${WHITE}" TOKEN_ID
-    echo -e "${NC}"
-    
-    read -p "  ${CYAN}❯${NC} ${YELLOW}Token (Secret)${NC} : ${WHITE}" TOKEN
-    echo -e "${NC}"
-    
-    # Port configuration
-    echo -e "\n  ${MAGENTA}⚙️${NC} ${BLUE}Port Configuration${NC} ${WHITE}(Press Enter for defaults)${NC}"
-    echo -e "  ─────────────────────────────────────────"
-    read -p "  ${CYAN}❯${NC} Wings API Port  ${WHITE}[8080]${NC}: ${WHITE}" WINGS_PORT_INPUT
-    echo -e "${NC}"
+    # Port configuration with defaults
+    echo -e "\n${YELLOW}Port Configuration (press Enter for defaults):${NC}"
+    read -p "${CYAN}❯${NC} Wings API Port [8080]: " WINGS_PORT_INPUT
     WINGS_PORT=${WINGS_PORT_INPUT:-8080}
     
-    read -p "  ${CYAN}❯${NC} SFTP Port       ${WHITE}[2022]${NC}: ${WHITE}" SFTP_PORT_INPUT
-    echo -e "${NC}"
+    read -p "${CYAN}❯${NC} SFTP Port [2022]: " SFTP_PORT_INPUT
     SFTP_PORT=${SFTP_PORT_INPUT:-2022}
     
     # Validation
-    echo -e "\n  ${YELLOW}⏳ Verifying configuration...${NC}"
-    sleep 1
+    echo -e "\n${YELLOW}Verifying configuration...${NC}"
     
     if [ -z "$PANEL_URL" ] || [ -z "$NODE_UUID" ] || [ -z "$TOKEN_ID" ] || [ -z "$TOKEN" ]; then
         error "All fields are required! Please run again."
     fi
     
     # Show summary
-    echo -e "\n  ${WHITE}╔═══════════════════════════════════════════════╗${NC}"
-    echo -e "  ${WHITE}║${NC}  ${GREEN}📋 Configuration Summary${NC}                  ${WHITE}║${NC}"
-    echo -e "  ${WHITE}╠═══════════════════════════════════════════════╣${NC}"
-    echo -e "  ${WHITE}║${NC}                                           ${WHITE}║${NC}"
-    echo -e "  ${WHITE}║${NC}  ${CYAN}Panel URL:${NC}  ${WHITE}${PANEL_URL}${NC}"
-    echo -e "  ${WHITE}║${NC}  ${CYAN}Node UUID:${NC}  ${WHITE}${NODE_UUID}${NC}"
-    echo -e "  ${WHITE}║${NC}  ${CYAN}Token ID:${NC}   ${WHITE}${TOKEN_ID}${NC}"
-    echo -e "  ${WHITE}║${NC}  ${CYAN}API Port:${NC}   ${WHITE}${WINGS_PORT}${NC}"
-    echo -e "  ${WHITE}║${NC}  ${CYAN}SFTP Port:${NC}  ${WHITE}${SFTP_PORT}${NC}"
-    echo -e "  ${WHITE}║${NC}                                           ${WHITE}║${NC}"
-    echo -e "  ${WHITE}╚═══════════════════════════════════════════════╝${NC}"
+    echo -e "\n${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}Configuration Summary:${NC}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "  Panel URL:  ${PANEL_URL}"
+    echo -e "  Node UUID:  ${NODE_UUID}"
+    echo -e "  Token ID:   ${TOKEN_ID}"
+    echo -e "  API Port:   ${WINGS_PORT}"
+    echo -e "  SFTP Port:  ${SFTP_PORT}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     
-    read -p "  ${GREEN}❯${NC} Continue with this configuration? ${WHITE}[y/n]${NC}: " confirm_config
-    echo -e "${NC}"
-    
+    read -p "Continue with this configuration? (y/n): " confirm_config
     if [ "$confirm_config" != "y" ] && [ "$confirm_config" != "Y" ]; then
-        echo -e "\n  ${YELLOW}⚠️ Configuration cancelled. Run again to re-enter.${NC}\n"
+        echo -e "\n${YELLOW}Configuration cancelled. Run again to re-enter.${NC}\n"
         exit 0
     fi
     
     # Configuration process
-    echo -e "\n  ${CYAN}⚙️ Configuring Wings...${NC}"
+    echo -e "\n${CYAN}Configuring Wings...${NC}"
     
     # Create directories
     mkdir -p ${WINGS_DIR}
@@ -606,21 +568,17 @@ EOF
     chmod 644 /var/log/pterodactyl/wings.log 2>/dev/null || touch /var/log/pterodactyl/wings.log && chmod 644 /var/log/pterodactyl/wings.log
     
     # Success message
-    echo -e "\n  ${GREEN}╔═══════════════════════════════════════════════╗${NC}"
-    echo -e "  ${GREEN}║${NC}  ${GREEN}✅ WINGS CONFIGURED SUCCESSFULLY!${NC}          ${GREEN}║${NC}"
-    echo -e "  ${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ WINGS CONFIGURED SUCCESSFULLY!${NC}          ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
     echo ""
     
     # Start Wings
-    echo -e "  ${CYAN}🚀 Starting Wings...${NC}"
-    read -p "  ${GREEN}❯${NC} Do you want to start Wings now? ${WHITE}[Y/n]${NC}: " start_wings
-    echo -e "${NC}"
+    echo -e "${CYAN}Starting Wings...${NC}"
+    read -p "Do you want to start Wings now? (y/n): " start_wings
     
     if [ "$start_wings" = "y" ] || [ "$start_wings" = "Y" ] || [ -z "$start_wings" ]; then
-        echo -e "\n  ${WHITE}┌───────────────────────────────────────────────┐${NC}"
-        echo -e "  ${WHITE}│${NC}  ${BLUE}▶️ Starting Wings Daemon...${NC}                ${WHITE}│${NC}"
-        echo -e "  ${WHITE}└───────────────────────────────────────────────┘${NC}"
-        echo ""
+        echo -e "\n${CYAN}Starting Wings Daemon...${NC}"
         
         # Check if running
         if pgrep -x "wings" > /dev/null; then
@@ -641,32 +599,26 @@ EOF
         if pgrep -x "wings" > /dev/null; then
             success "Wings started (PID: ${WINGS_PID})"
             
-            echo -e "\n  ${GREEN}╔═══════════════════════════════════════════════╗${NC}"
-            echo -e "  ${GREEN}║${NC}  ${GREEN}🎉 WINGS IS NOW RUNNING!${NC}                  ${GREEN}║${NC}"
-            echo -e "  ${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+            echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║${NC}  ${GREEN}🎉 WINGS IS NOW RUNNING!${NC}                  ${GREEN}║${NC}"
+            echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
             echo ""
-            echo -e "  ${MAGENTA}📋 Next Steps:${NC}"
-            echo -e "  ─────────────────────────────────────────"
-            echo -e "  1. Go to Panel: ${WHITE}${PANEL_URL}${NC}"
-            echo -e "  2. Navigate: ${WHITE}Admin → Nodes${NC}"
-            echo -e "  3. Check for ${GREEN}● Connected${NC} (green dot)"
-            echo -e "  4. ${YELLOW}Start creating game servers!${NC}\n"
-            echo -e "  ${MAGENTA}📝 Useful Commands:${NC}"
-            echo -e "  ─────────────────────────────────────────"
-            echo -e "  View logs:    ${WHITE}tail -f /var/log/pterodactyl/wings.log${NC}"
-            echo -e "  Stop Wings:   ${WHITE}pkill wings${NC}"
-            echo -e "  Check status: ${WHITE}ps aux | grep wings${NC}\n"
+            echo -e "${MAGENTA}Next Steps:${NC}"
+            echo "  1. Go to Panel: ${PANEL_URL}"
+            echo "  2. Navigate: Admin → Nodes"
+            echo "  3. Check for Connected (green dot)"
+            echo "  4. Start creating game servers!"
+            echo ""
+            echo -e "${MAGENTA}Useful Commands:${NC}"
+            echo "  View logs:    tail -f /var/log/pterodactyl/wings.log"
+            echo "  Stop Wings:   pkill wings"
+            echo "  Check status: ps aux | grep wings"
         else
             warn "Wings may not have started"
-            echo -e "\n  ${YELLOW}Check logs: ${WHITE}tail -f /var/log/pterodactyl/wings.log${NC}\n"
-            echo -e "  ${YELLOW}Troubleshooting:${NC}"
-            echo -e "  1. Verify Panel URL"
-            echo -e "  2. Check UUID/Token"
-            echo -e "  3. Docker status: ${WHITE}systemctl status docker${NC}"
-            echo -e "  4. Check firewall\n"
+            echo -e "\n${YELLOW}Check logs: tail -f /var/log/pterodactyl/wings.log${NC}\n"
         fi
     else
-        info "Start manually: ${WHITE}wings --config /etc/pterodactyl/config.yml${NC}"
+        info "Start manually: wings --config /etc/pterodactyl/config.yml"
     fi
 }
 
@@ -973,35 +925,30 @@ show_help() {
 main_menu() {
     show_logo
 
-    echo -e "${WHITE}╔════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${WHITE}║${NC}  ${YELLOW}🎯${NC} ${BLUE}Select an Option${NC}                                   ${WHITE}║${NC}"
-    echo -e "${WHITE}╠════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}1${NC}) ${CYAN}Install Pterodactyl Panel${NC}                       ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}2${NC}) ${CYAN}Install Wings Daemon${NC}                          ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}3${NC}) ${CYAN}Quick Setup (Panel + Wings)${NC}                 ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}4${NC}) ${YELLOW}⭐ Auto-Configure Wings${NC} (Recommended)        ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}5${NC}) ${RED}Uninstall Pterodactyl${NC}                       ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}  ${GREEN}0${NC}) ${WHITE}Exit${NC}                                       ${WHITE}║${NC}"
-    echo -e "${WHITE}║${NC}                                                    ${WHITE}║${NC}"
-    echo -e "${WHITE}╚════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${YELLOW}  Select an Option:${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
+    echo -e "  ${GREEN}1${NC}) Install Pterodactyl Panel"
+    echo -e "  ${GREEN}2${NC}) Install Wings Daemon"
+    echo -e "  ${GREEN}3${NC}) Quick Setup (Panel + Wings)"
+    echo -e "  ${GREEN}4${NC}) Auto-Configure Wings ${YELLOW}⭐${NC} (Recommended)"
+    echo -e "  ${GREEN}5${NC}) Uninstall Pterodactyl"
+    echo -e "  ${GREEN}0${NC}) Exit"
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    # Read with proper handling
-    while true; do
-        read -p "  ${CYAN}❯${NC} ${YELLOW}Enter your choice${NC} [${WHITE}0-5${NC}]: ${WHITE}" choice
-        echo -e "${NC}"
-        
-        # Validate input
-        case $choice in
-            0|1|2|3|4|5)
-                break
-                ;;
-            *)
-                echo -e "  ${RED}❌ Invalid option. Please enter 0-5.${NC}\n"
-                ;;
-        esac
-    done
+    read -p "${CYAN}❯${NC} Enter your choice [0-5]: " choice
+    echo ""
+
+    case $choice in
+        0|1|2|3|4|5)
+            ;;
+        *)
+            echo -e "${RED}❌ Invalid option. Please enter 0-5.${NC}\n"
+            main_menu
+            ;;
+    esac
 
     case $choice in
         1) install_panel ;;
@@ -1009,7 +956,7 @@ main_menu() {
         3) quick_setup ;;
         4) auto_configure_wings ;;
         5) uninstall ;;
-        0) echo -e "\n  ${GREEN}👋 Goodbye! Thanks for using!${NC}\n"; exit 0 ;;
+        0) echo -e "${GREEN}👋 Goodbye!${NC}\n"; exit 0 ;;
     esac
 }
 
