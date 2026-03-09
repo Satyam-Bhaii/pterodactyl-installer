@@ -1120,37 +1120,39 @@ install_themes_menu() {
     echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
     echo -e "  ${GREEN}│${NC}  ${GREEN}1${NC}) Nebula Theme                          ${GREEN}│${NC}"
     echo -e "  ${GREEN}│${NC}  ${GREEN}2${NC}) Hyper-V Theme                         ${GREEN}│${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}3${NC}) Install All Themes                    ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}3${NC}) SATYAM Theme ${MAGENTA}🔥${NC} (Premium Gaming)       ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}4${NC}) Install All Themes                    ${GREEN}│${NC}"
     echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
     echo -e "  ${GREEN}│${NC}  ${CYAN}📦 EXTENSIONS (Blueprints)${NC}                  ${GREEN}│${NC}"
     echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}4${NC}) HuxRegister Extension                 ${GREEN}│${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}5${NC}) MCPlugins Extension                   ${GREEN}│${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}6${NC}) SagaMinecraftPlayerManager Extension  ${GREEN}│${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}7${NC}) VersionChanger Extension              ${GREEN}│${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}8${NC}) Install All Extensions ${YELLOW}⭐${NC}                ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}5${NC}) HuxRegister Extension                 ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}6${NC}) MCPlugins Extension                   ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}7${NC}) SagaMinecraftPlayerManager Extension  ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}8${NC}) VersionChanger Extension              ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}9${NC}) Install All Extensions ${YELLOW}⭐${NC}                ${GREEN}│${NC}"
     echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
     echo -e "  ${GREEN}│${NC}  ${MAGENTA}⚙️ COMPLETE${NC}                                ${GREEN}│${NC}"
     echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
-    echo -e "  ${GREEN}│${NC}  ${GREEN}9${NC}) Install Everything (Themes + Extensions)${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}10${NC}) Install Everything (Themes + Extensions)${GREEN}│${NC}"
     echo -e "  ${GREEN}│${NC}  ${GREEN}0${NC}) Back to Main Menu                     ${GREEN}│${NC}"
     echo -e "  ${GREEN}└──────────────────────────────────────────┘${NC}"
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    read -p "${CYAN}❯${NC} Enter your choice [0-9]: " theme_choice
+    read -p "${CYAN}❯${NC} Enter your choice [0-10]: " theme_choice
     echo ""
     
     case $theme_choice in
         1) install_nebula_theme ;;
         2) install_hyperv_theme ;;
-        3) install_all_themes_only ;;
-        4) install_single_blueprint "huxregister.blueprint" "HuxRegister" ;;
-        5) install_single_blueprint "mcplugins.blueprint" "MCPlugins" ;;
-        6) install_single_blueprint "sagaminecraftplayermanager.blueprint" "SagaMinecraftPlayerManager" ;;
-        7) install_single_blueprint "versionchanger.blueprint" "VersionChanger" ;;
-        8) install_all_blueprints ;;
-        9) install_complete_package ;;
+        3) install_satyam_theme ;;
+        4) install_all_themes_only ;;
+        5) install_single_blueprint "huxregister.blueprint" "HuxRegister" ;;
+        6) install_single_blueprint "mcplugins.blueprint" "MCPlugins" ;;
+        7) install_single_blueprint "sagaminecraftplayermanager.blueprint" "SagaMinecraftPlayerManager" ;;
+        8) install_single_blueprint "versionchanger.blueprint" "VersionChanger" ;;
+        9) install_all_blueprints ;;
+        10) install_complete_package ;;
         0) main_menu ;;
         *) echo -e "${RED}❌ Invalid option.${NC}\n"; install_themes_menu ;;
     esac
@@ -1416,7 +1418,7 @@ install_all_themes_only() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     
-    read -p "Install Nebula + Hyper-V themes? (y/n): " confirm_themes
+    read -p "Install Nebula + Hyper-V + SATYAM themes? (y/n): " confirm_themes
     if [[ ! "$confirm_themes" =~ ^[Yy]$ ]]; then
         echo -e "\n${YELLOW}Installation cancelled.${NC}"
         return
@@ -1430,6 +1432,10 @@ install_all_themes_only() {
     echo -e "\n${YELLOW}Installing Hyper-V Theme...${NC}"
     install_hyperv_theme
     
+    # Install SATYAM Theme
+    echo -e "\n${YELLOW}Installing SATYAM Theme...${NC}"
+    install_satyam_theme
+    
     echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
     echo -e "${GREEN}║${NC}  ${GREEN}✅ ALL THEMES INSTALLED!${NC}                  ${GREEN}║${NC}"
     echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
@@ -1437,8 +1443,108 @@ install_all_themes_only() {
     echo -e "${MAGENTA}Installed:${NC}"
     echo "  ✓ Nebula Theme"
     echo "  ✓ Hyper-V Theme"
+    echo "  ✓ SATYAM Theme 🔥"
     echo ""
     echo -e "${YELLOW}Refresh your panel to see themes!${NC}"
+}
+
+install_satyam_theme() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🔥 Installing SATYAM Theme${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    info "SATYAM Theme - Premium Gaming Theme with Neon Effects"
+    echo -e "${YELLOW}Features:${NC}"
+    echo "  • Dark Gaming UI with Neon Colors"
+    echo "  • Animated Background Effects"
+    echo "  • Glass Morphism Cards"
+    echo "  • Smooth Animations"
+    echo "  • Mobile Responsive"
+    echo ""
+    
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
+        error "Directory $PANEL_DIR_INPUT does not exist!"
+    fi
+    
+    # Download SATYAM Theme from GitHub
+    echo -e "\n${YELLOW}Downloading SATYAM Theme from GitHub...${NC}"
+    cd "$PANEL_DIR_INPUT" || exit
+    
+    # GitHub release URL
+    SATYAM_THEME_URL="https://github.com/Satyam-Bhaii/satyam-theme/releases/latest/download/satyam-theme.zip"
+    
+    # Download with curl or wget
+    if command -v curl &> /dev/null; then
+        curl -L -o satyam-theme.zip "$SATYAM_THEME_URL" &>/dev/null
+    elif command -v wget &> /dev/null; then
+        wget -q "$SATYAM_THEME_URL" -O satyam-theme.zip
+    else
+        error "Neither curl nor wget found!"
+    fi
+    
+    if [[ ! -f "satyam-theme.zip" ]]; then
+        echo -e "${YELLOW}Download failed! Trying alternative method...${NC}"
+        # Fallback: Direct copy from local if available
+        LOCAL_THEME_DIR="C:/Users/sgsat/OneDrive/Desktop/google colab/satyam-theme"
+        if [[ -d "$LOCAL_THEME_DIR" ]]; then
+            echo -e "${YELLOW}Using local theme files...${NC}"
+            mkdir -p "$PANEL_DIR_INPUT/public/satyam-theme"
+            cp -r "$LOCAL_THEME_DIR"/* "$PANEL_DIR_INPUT/public/satyam-theme/" 2>/dev/null || true
+        else
+            error "Failed to download theme and no local files found!"
+        fi
+    else
+        # Extract
+        echo -e "${YELLOW}Extracting theme...${NC}"
+        unzip -o satyam-theme.zip &>/dev/null
+        rm -f satyam-theme.zip
+        
+        # Move to public directory
+        if [[ -d "satyam-theme" ]]; then
+            mv satyam-theme/* public/ 2>/dev/null || true
+            rm -rf satyam-theme 2>/dev/null || true
+        fi
+    fi
+    
+    # Set permissions
+    echo -e "\n${YELLOW}Setting permissions...${NC}"
+    chown -R www-data:www-data "$PANEL_DIR_INPUT/public/satyam-theme" 2>/dev/null || true
+    chmod -R 755 "$PANEL_DIR_INPUT/public/satyam-theme" 2>/dev/null || true
+    chown -R www-data:www-data "$PANEL_DIR_INPUT" 2>/dev/null || true
+    
+    # Clear cache
+    echo -e "${YELLOW}Clearing cache...${NC}"
+    cd "$PANEL_DIR_INPUT"
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan view:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "SATYAM Theme installed!"
+    echo ""
+    echo -e "${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ SATYAM THEME INSTALLED!${NC}                ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${MAGENTA}Theme Features:${NC}"
+    echo "  ✓ Neon Gaming UI"
+    echo "  ✓ Animated Background"
+    echo "  ✓ Glass Morphism"
+    echo "  ✓ Custom Dashboard"
+    echo "  ✓ SATYAM Branding"
+    echo ""
+    echo -e "${YELLOW}To activate:${NC}"
+    echo "  1. Go to Admin → Settings"
+    echo "  2. Select 'SATYAM' theme"
+    echo "  3. Save changes"
+    echo ""
+    echo -e "${CYAN}GitHub: https://github.com/Satyam-Bhaii/satyam-theme${NC}"
+    echo -e "${MAGENTA}Made by SATYAM BHAIi 🔥${NC}"
 }
 
 install_complete_package() {
@@ -1447,7 +1553,7 @@ install_complete_package() {
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo -e "${YELLOW}This will install:${NC}"
-    echo "  • All Themes (Nebula + Hyper-V)"
+    echo "  • All Themes (Nebula + Hyper-V + SATYAM)"
     echo "  • All Extensions (4 Blueprints)"
     echo ""
     
@@ -1471,13 +1577,14 @@ install_complete_package() {
     echo -e "${MAGENTA}Installed:${NC}"
     echo "  ✓ Nebula Theme"
     echo "  ✓ Hyper-V Theme"
+    echo "  ✓ SATYAM Theme 🔥"
     echo "  ✓ HuxRegister Extension"
     echo "  ✓ MCPlugins Extension"
     echo "  ✓ SagaMinecraftPlayerManager Extension"
     echo "  ✓ VersionChanger Extension"
     echo ""
     echo -e "${YELLOW}Refresh your panel to see all changes!${NC}"
-    echo -e "${MAGENTA}Made by SATYAM BHAIi${NC}"
+    echo -e "${MAGENTA}Made by SATYAM BHAIi 🔥${NC}"
 }
 
 install_nebula_theme() {
