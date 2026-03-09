@@ -1100,36 +1100,45 @@ install_themes_menu() {
     show_logo
     
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${MAGENTA}🎨 Theme & Extensions Installer${NC}"
+    echo -e "${MAGENTA}🎨 Themes & Extensions${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "  ${GREEN}1${NC}) Install Blueprint Framework (Required)"
-    echo -e "  ${GREEN}2${NC}) Install SATYAM's Extensions ${YELLOW}⭐${NC}"
-    echo -e "  ${GREEN}3${NC}) Install Nebula Theme"
-    echo -e "  ${GREEN}4${NC}) Install Hyper-V Theme"
-    echo -e "  ${GREEN}5${NC}) Install All (Blueprint + Extensions + Themes)"
-    echo -e "  ${GREEN}0${NC}) Back to Main Menu"
+    echo -e "  ${GREEN}┌──────────────────────────────────────────┐${NC}"
+    echo -e "  ${GREEN}│${NC}  ${YELLOW}🎨 THEMES${NC}                                  ${GREEN}│${NC}"
+    echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}1${NC}) Nebula Theme                          ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}2${NC}) Hyper-V Theme                         ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}3${NC}) Install All Themes                    ${GREEN}│${NC}"
+    echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
+    echo -e "  ${GREEN}│${NC}  ${CYAN}📦 EXTENSIONS (Blueprints)${NC}                  ${GREEN}│${NC}"
+    echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}4${NC}) HuxRegister Extension                 ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}5${NC}) MCPlugins Extension                   ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}6${NC}) SagaMinecraftPlayerManager Extension  ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}7${NC}) VersionChanger Extension              ${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}8${NC}) Install All Extensions ${YELLOW}⭐${NC}                ${GREEN}│${NC}"
+    echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
+    echo -e "  ${GREEN}│${NC}  ${MAGENTA}⚙️ COMPLETE${NC}                                ${GREEN}│${NC}"
+    echo -e "  ${GREEN}├──────────────────────────────────────────┤${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}9${NC}) Install Everything (Themes + Extensions)${GREEN}│${NC}"
+    echo -e "  ${GREEN}│${NC}  ${GREEN}0${NC}) Back to Main Menu                     ${GREEN}│${NC}"
+    echo -e "  ${GREEN}└──────────────────────────────────────────┘${NC}"
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     
-    read -p "${CYAN}❯${NC} Enter your choice [0-5]: " theme_choice
+    read -p "${CYAN}❯${NC} Enter your choice [0-9]: " theme_choice
     echo ""
     
     case $theme_choice in
-        1) install_blueprint ;;
-        2) 
-            # Install only local blueprints
-            read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
-            PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
-            echo ""
-            if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
-                error "Directory $PANEL_DIR_INPUT does not exist!"
-            fi
-            install_local_blueprints "$PANEL_DIR_INPUT"
-            ;;
-        3) install_nebula_theme ;;
-        4) install_hyperv_theme ;;
-        5) install_all_themes ;;
+        1) install_nebula_theme ;;
+        2) install_hyperv_theme ;;
+        3) install_all_themes_only ;;
+        4) install_single_blueprint "huxregister.blueprint" "HuxRegister" ;;
+        5) install_single_blueprint "mcplugins.blueprint" "MCPlugins" ;;
+        6) install_single_blueprint "sagaminecraftplayermanager.blueprint" "SagaMinecraftPlayerManager" ;;
+        7) install_single_blueprint "versionchanger.blueprint" "VersionChanger" ;;
+        8) install_all_blueprints ;;
+        9) install_complete_package ;;
         0) main_menu ;;
         *) echo -e "${RED}❌ Invalid option.${NC}\n"; install_themes_menu ;;
     esac
@@ -1283,6 +1292,180 @@ install_local_blueprints() {
     success "All local blueprints installed!"
     echo ""
     echo -e "${GREEN}Extensions activated in your panel!${NC}"
+}
+
+install_single_blueprint() {
+    local BLUEPRINT_NAME="$1"
+    local BLUEPRINT_DISPLAY="$2"
+    
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}📦 Installing $BLUEPRINT_DISPLAY${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
+        error "Directory $PANEL_DIR_INPUT does not exist!"
+    fi
+    
+    # Check if Blueprint framework is installed
+    if [[ ! -f "$PANEL_DIR_INPUT/blueprint.sh" ]]; then
+        warn "Blueprint Framework not found!"
+        read -p "Install Blueprint Framework first? (y/n): " install_bp
+        if [[ "$install_bp" =~ ^[Yy]$ ]]; then
+            install_blueprint
+        else
+            error "Blueprint Framework is required for extensions!"
+        fi
+    fi
+    
+    # Local blueprints path
+    LOCAL_BLUEPRINTS_DIR="C:/Users/sgsat/OneDrive/Desktop/google colab/themes"
+    
+    echo -e "${YELLOW}Installing $BLUEPRINT_DISPLAY...${NC}"
+    
+    # Create blueprints directory
+    mkdir -p "$PANEL_DIR_INPUT/blueprints"
+    
+    # Copy blueprint file
+    if [[ -f "$LOCAL_BLUEPRINTS_DIR/$BLUEPRINT_NAME" ]]; then
+        cp "$LOCAL_BLUEPRINTS_DIR/$BLUEPRINT_NAME" "$PANEL_DIR_INPUT/blueprints/"
+        echo -e "  ${GREEN}✓${NC} Copied $BLUEPRINT_NAME"
+    else
+        echo -e "  ${YELLOW}!${NC} $BLUEPRINT_NAME not found in themes folder"
+    fi
+    
+    # Set permissions
+    chown -R www-data:www-data "$PANEL_DIR_INPUT/blueprints"
+    chmod 644 "$PANEL_DIR_INPUT/blueprints"/*.blueprint 2>/dev/null || true
+    
+    # Install via blueprint CLI
+    cd "$PANEL_DIR_INPUT"
+    echo -e "${YELLOW}Installing via Blueprint CLI...${NC}"
+    bash blueprint.sh install "$BLUEPRINT_NAME" &>/dev/null || true
+    
+    # Clear cache
+    php artisan config:clear &>/dev/null
+    php artisan cache:clear &>/dev/null
+    php artisan optimize &>/dev/null
+    
+    success "$BLUEPRINT_DISPLAY installed successfully!"
+    echo ""
+    echo -e "${GREEN}Extension activated!${NC}"
+}
+
+install_all_blueprints() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}📦 Installing All Extensions${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    read -p "${CYAN}❯${NC} Enter Pterodactyl directory [/var/www/pterodactyl]: " PANEL_DIR_INPUT
+    PANEL_DIR_INPUT=${PANEL_DIR_INPUT:-/var/www/pterodactyl}
+    echo ""
+    
+    if [[ ! -d "$PANEL_DIR_INPUT" ]]; then
+        error "Directory $PANEL_DIR_INPUT does not exist!"
+    fi
+    
+    # Check if Blueprint framework is installed
+    if [[ ! -f "$PANEL_DIR_INPUT/blueprint.sh" ]]; then
+        warn "Blueprint Framework not found!"
+        read -p "Install Blueprint Framework first? (y/n): " install_bp
+        if [[ "$install_bp" =~ ^[Yy]$ ]]; then
+            install_blueprint
+        else
+            error "Blueprint Framework is required for extensions!"
+        fi
+    fi
+    
+    # Install all local blueprints
+    install_local_blueprints "$PANEL_DIR_INPUT"
+    
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ ALL EXTENSIONS INSTALLED!${NC}                ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${MAGENTA}Installed:${NC}"
+    echo "  ✓ HuxRegister"
+    echo "  ✓ MCPlugins"
+    echo "  ✓ SagaMinecraftPlayerManager"
+    echo "  ✓ VersionChanger"
+    echo ""
+    echo -e "${GREEN}All extensions activated!${NC}"
+}
+
+install_all_themes_only() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}🎨 Installing All Themes${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    read -p "Install Nebula + Hyper-V themes? (y/n): " confirm_themes
+    if [[ ! "$confirm_themes" =~ ^[Yy]$ ]]; then
+        echo -e "\n${YELLOW}Installation cancelled.${NC}"
+        return
+    fi
+    
+    # Install Nebula
+    echo -e "\n${YELLOW}Installing Nebula Theme...${NC}"
+    install_nebula_theme
+    
+    # Install Hyper-V
+    echo -e "\n${YELLOW}Installing Hyper-V Theme...${NC}"
+    install_hyperv_theme
+    
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ ALL THEMES INSTALLED!${NC}                  ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${MAGENTA}Installed:${NC}"
+    echo "  ✓ Nebula Theme"
+    echo "  ✓ Hyper-V Theme"
+    echo ""
+    echo -e "${YELLOW}Refresh your panel to see themes!${NC}"
+}
+
+install_complete_package() {
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${MAGENTA}⚙️ Installing Complete Package${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "${YELLOW}This will install:${NC}"
+    echo "  • All Themes (Nebula + Hyper-V)"
+    echo "  • All Extensions (4 Blueprints)"
+    echo ""
+    
+    read -p "Continue? (y/n): " confirm_complete
+    if [[ ! "$confirm_complete" =~ ^[Yy]$ ]]; then
+        echo -e "\n${YELLOW}Installation cancelled.${NC}"
+        return
+    fi
+    
+    # Install all themes
+    install_all_themes_only
+    
+    # Install all blueprints
+    echo -e "\n${YELLOW}Installing All Extensions...${NC}"
+    install_all_blueprints
+    
+    echo -e "\n${GREEN}╔═══════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║${NC}  ${GREEN}✅ COMPLETE PACKAGE INSTALLED!${NC}              ${GREEN}║${NC}"
+    echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${MAGENTA}Installed:${NC}"
+    echo "  ✓ Nebula Theme"
+    echo "  ✓ Hyper-V Theme"
+    echo "  ✓ HuxRegister Extension"
+    echo "  ✓ MCPlugins Extension"
+    echo "  ✓ SagaMinecraftPlayerManager Extension"
+    echo "  ✓ VersionChanger Extension"
+    echo ""
+    echo -e "${YELLOW}Refresh your panel to see all changes!${NC}"
+    echo -e "${MAGENTA}Made by SATYAM BHAIi${NC}"
 }
 
 install_nebula_theme() {
