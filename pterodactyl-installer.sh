@@ -177,20 +177,21 @@ install_php() {
     if [ "$PKG_MANAGER" = "apt" ]; then
         add-apt-repository ppa:ondrej/php -y
         apt update
+        # Install PHP with all required extensions (json is built-in for PHP 8.2+)
         apt install -y php${PHP_VERSION} php${PHP_VERSION}-fpm \
             php${PHP_VERSION}-mysql php${PHP_VERSION}-mbstring \
             php${PHP_VERSION}-xml php${PHP_VERSION}-zip \
             php${PHP_VERSION}-gd php${PHP_VERSION}-curl \
             php${PHP_VERSION}-intl php${PHP_VERSION}-bcmath \
             php${PHP_VERSION}-pdo php${PHP_VERSION}-tokenizer \
-            php${PHP_VERSION}-fileinfo php${PHP_VERSION}-json
+            php${PHP_VERSION}-fileinfo
     else
         yum install -y remi-release
         yum install -y php php-mysqlnd php-mbstring php-xml \
             php-zip php-gd php-curl php-intl php-bcmath \
-            php-pdo php-tokenizer php-fileinfo php-json php-fpm
+            php-pdo php-tokenizer php-fileinfo php-fpm
     fi
-    
+
     # Verify PHP version
     PHP_VER=$(php -v | head -n 1 | cut -d ' ' -f 2 | cut -d '.' -f 1,2)
     success "PHP ${PHP_VER} installed"
@@ -260,16 +261,20 @@ install_redis() {
     echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${YELLOW}[8/8]${NC} Installing Redis..."
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-    
+
     if [ "$PKG_MANAGER" = "apt" ]; then
         apt install -y redis-server
     else
         yum install -y redis
     fi
-    
-    systemctl enable redis
-    systemctl start redis
-    
+
+    # Try different service names (redis vs redis-server)
+    systemctl enable redis-server 2>/dev/null || systemctl enable redis 2>/dev/null || true
+    systemctl start redis-server 2>/dev/null || systemctl start redis 2>/dev/null || {
+        warn "Redis may not have started automatically. Starting manually..."
+        redis-server --daemonize yes
+    }
+
     success "Redis installed and started"
 }
 
@@ -294,17 +299,23 @@ configure_panel() {
     echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${BLUE}⚙️${NC} Configuring Panel..."
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-    
+
     cd ${PANEL_DIR}
-    
-    # Install Composer dependencies
+
+    # Install Composer dependencies (without root warning)
     info "Installing Composer dependencies..."
-    composer install --no-dev --optimize-autoloader
-    
-    # Generate encryption key
+    export COMPOSER_ALLOW_SUPERUSER=1
+    composer install --no-dev --optimize-autoloader --no-interaction
+
+    # Generate encryption key FIRST (before any other artisan commands)
     info "Generating encryption key..."
-    php artisan key:generate --force
+    php artisan key:generate --force --no-interaction
     
+    # Clear all cache to ensure clean state
+    php artisan config:clear --no-interaction
+    php artisan cache:clear --no-interaction
+    php artisan view:clear --no-interaction
+
     success "Panel configured"
 }
 
@@ -333,24 +344,29 @@ create_admin_user() {
     echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${BLUE}👤${NC} Creating Admin User..."
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-    
+
     cd ${PANEL_DIR}
-    
+
     # Set defaults if not provided
     EMAIL=${EMAIL:-"admin@satyamvps.com"}
     USERNAME=${USERNAME:-"satyam_admin"}
     FIRST_NAME=${FIRST_NAME:-"Satyam"}
     LAST_NAME=${LAST_NAME:-"Bhaii"}
     PASSWORD=${PASSWORD:-"Satyam@123"}
-    
+
+    # Create admin user with error handling
     php artisan p:user:make \
         --email="${EMAIL}" \
         --username="${USERNAME}" \
         --name-first="${FIRST_NAME}" \
         --name-last="${LAST_NAME}" \
         --password="${PASSWORD}" \
-        --admin=1
-    
+        --admin=1 \
+        --no-interaction || {
+        # If user already exists, skip
+        warn "User may already exist, skipping..."
+    }
+
     success "Admin user created"
     info "Email: ${EMAIL}"
     info "Username: ${USERNAME}"
@@ -414,11 +430,20 @@ server {
 }
 NGINX_EOF
 
-    ln -s /etc/nginx/sites-available/pterodactyl.conf /etc/nginx/sites-enabled/
-    systemctl restart nginx
-    systemctl enable nginx
+    # Remove old symlink if exists (to avoid conflicts)
+    rm -f /etc/nginx/sites-enabled/pterodactyl.conf
     
-    success "Nginx configured"
+    # Create new symlink
+    ln -s /etc/nginx/sites-available/pterodactyl.conf /etc/nginx/sites-enabled/
+    
+    # Test Nginx config before restart
+    nginx -t && {
+        systemctl restart nginx
+        systemctl enable nginx
+        success "Nginx configured and started"
+    } || {
+        error "Nginx configuration test failed!"
+    }
 }
 
 # Install Wings (Daemon)
