@@ -472,12 +472,16 @@ NGINX_EOF
     systemctl restart php${PHP_VERSION}-fpm 2>/dev/null || systemctl restart php-fpm 2>/dev/null || true
     systemctl restart mariadb 2>/dev/null || true
     
-    # Final cache clear after all configuration (suppress errors for optional commands)
+    # Final cache clear after all configuration (completely silent - no output at all)
     cd ${PANEL_DIR}
-    php artisan config:clear --no-interaction 2>/dev/null || true
-    php artisan cache:clear --no-interaction 2>/dev/null || true
-    php artisan view:clear --no-interaction 2>/dev/null || true
-    php artisan optimize --no-interaction 2>/dev/null || true
+    {
+        php artisan config:clear --no-interaction >/dev/null 2>&1 &
+        php artisan cache:clear --no-interaction >/dev/null 2>&1 &
+        php artisan view:clear --no-interaction >/dev/null 2>&1 &
+        wait
+        php artisan optimize --no-interaction >/dev/null 2>&1 &
+        wait
+    } >/dev/null 2>&1
     
     success "All services restarted"
 }
