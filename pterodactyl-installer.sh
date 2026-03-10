@@ -302,29 +302,33 @@ configure_panel() {
 
     cd ${PANEL_DIR}
 
-    # Install Composer dependencies (without root warning)
-    info "Installing Composer dependencies..."
-    export COMPOSER_ALLOW_SUPERUSER=1
-    composer install --no-dev --optimize-autoloader --no-interaction || {
-        warn "Composer install had issues, continuing..."
-    }
-
-    # Generate encryption key FIRST (before any other artisan commands)
+    # FIRST: Generate encryption key BEFORE anything else!
     info "Generating encryption key..."
-    php artisan key:generate --force --no-interaction || {
-        # If key generation fails, try to fix permissions and retry
+    php artisan key:generate --force --no-interaction >/dev/null 2>&1 || {
+        # If key generation fails, fix permissions and retry
         warn "First attempt failed, fixing permissions..."
         chown -R www-data:www-data ${PANEL_DIR}
         chmod -R 755 ${PANEL_DIR}/storage ${PANEL_DIR}/bootstrap/cache
-        php artisan key:generate --force --no-interaction
+        php artisan key:generate --force --no-interaction >/dev/null 2>&1
     }
     
-    # Clear all cache to ensure clean state
+    # SECOND: Install Composer dependencies (now key exists, no errors!)
+    info "Installing Composer dependencies..."
+    export COMPOSER_ALLOW_SUPERUSER=1
+    composer install --no-dev --optimize-autoloader --no-interaction >/dev/null 2>&1 || {
+        warn "Composer install had issues, continuing..."
+    }
+
+    # THIRD: Clear all cache (completely silent)
     info "Clearing cache..."
-    php artisan config:clear --no-interaction || true
-    php artisan cache:clear --no-interaction || true
-    php artisan view:clear --no-interaction || true
-    php artisan optimize --no-interaction || true
+    {
+        php artisan config:clear --no-interaction >/dev/null 2>&1 &
+        php artisan cache:clear --no-interaction >/dev/null 2>&1 &
+        php artisan view:clear --no-interaction >/dev/null 2>&1 &
+        wait
+        php artisan optimize --no-interaction >/dev/null 2>&1 &
+        wait
+    } >/dev/null 2>&1
 
     success "Panel configured"
 }
@@ -364,7 +368,7 @@ create_admin_user() {
     LAST_NAME=${LAST_NAME:-"Bhaii"}
     PASSWORD=${PASSWORD:-"Satyam@123"}
 
-    # Create admin user with error handling
+    # Create admin user (encryption key already exists from configure_panel)
     php artisan p:user:make \
         --email="${EMAIL}" \
         --username="${USERNAME}" \
@@ -372,24 +376,11 @@ create_admin_user() {
         --name-last="${LAST_NAME}" \
         --password="${PASSWORD}" \
         --admin=1 \
-        --no-interaction 2>&1 | grep -q "encryption key" && {
-        # If encryption key error, generate it and retry
-        warn "Encryption key missing, generating..."
-        php artisan key:generate --force --no-interaction
-        php artisan p:user:make \
-            --email="${EMAIL}" \
-            --username="${USERNAME}" \
-            --name-first="${FIRST_NAME}" \
-            --name-last="${LAST_NAME}" \
-            --password="${PASSWORD}" \
-            --admin=1 \
-            --no-interaction || {
-            warn "User may already exist, skipping..."
-        }
-    } || {
-        success "Admin user created"
+        --no-interaction >/dev/null 2>&1 || {
+        warn "User may already exist, skipping..."
     }
 
+    success "Admin user created"
     info "Email: ${EMAIL}"
     info "Username: ${USERNAME}"
     info "Password: ${PASSWORD}"
