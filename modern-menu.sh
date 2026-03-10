@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ─────────────────────────────────────────────────────────────────────
-# SATYAM BHAIi MODERN GRID MENU
+# SATYAM BHAIi MODERN GRID MENU - v4.0
 # ─────────────────────────────────────────────────────────────────────
 
 # SEMA UI COLORS
@@ -15,6 +15,9 @@ GOLD='\033[38;5;220m'
 PINK='\033[38;5;213m'
 BLUE='\033[38;5;27m'
 NC='\033[0m'
+
+# Script URLs
+MAIN_INSTALLER="https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh"
 
 # Helper Functions
 pause() {
@@ -46,8 +49,54 @@ show_header() {
     echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
 }
 
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${RED}✗ This script must be run as root${NC}"
+        echo -e "${YELLOW}Run with: sudo bash modern-menu.sh${NC}"
+        sleep 3
+        exit 1
+    fi
+}
+
+check_internet() {
+    if ! ping -c 1 8.8.8.8 &>/dev/null; then
+        echo -e "${RED}✗ No internet connection!${NC}"
+        sleep 3
+        exit 1
+    fi
+}
+
+run_installer() {
+    local option="$1"
+    local description="$2"
+    
+    echo -e "  ${CYAN}➜ Installing $description...${NC}"
+    echo -e "${GRAY}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Check if curl is available
+    if ! command -v curl &> /dev/null; then
+        echo -e "${RED}✗ curl not found! Installing...${NC}"
+        apt-get update -qq && apt-get install -y -qq curl
+    fi
+    
+    # Download and run installer
+    if bash <(curl -sL "$MAIN_INSTALLER") "$option"; then
+        echo -e "\n${GREEN}✓ $description completed!${NC}"
+    else
+        echo -e "\n${RED}✗ $description failed!${NC}"
+        echo -e "${YELLOW}Try running manually: bash <(curl -sL $MAIN_INSTALLER) $option${NC}"
+    fi
+    
+    pause
+}
+
 # Main Grid Menu
 panel_menu() {
+    # Check root and internet
+    check_root
+    check_internet
+    
     while true; do
         show_header
         
@@ -65,39 +114,28 @@ panel_menu() {
         read p
 
         case $p in
-            1)  echo -e "  ${CYAN}➜ Installing Pterodactyl Panel...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) panel
-                pause ;;
-            2)  echo -e "  ${CYAN}➜ Installing SATYAM Theme...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) themes
-                pause ;;
-            3)  echo -e "  ${CYAN}➜ Installing Nebula Theme...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) themes
-                pause ;;
-            4)  echo -e "  ${CYAN}➜ Installing Hyper-V Theme...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) themes
-                pause ;;
-            5)  echo -e "  ${CYAN}➜ Installing Extensions...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) themes
-                pause ;;
-            6)  echo -e "  ${CYAN}➜ Installing All Extensions...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) themes
-                pause ;;
-            7)  echo -e "  ${CYAN}➜ Installing Wings Daemon...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) wings
-                pause ;;
-            8)  echo -e "  ${CYAN}➜ Auto-Configuring Wings...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) configure
-                pause ;;
-            9)  echo -e "  ${CYAN}➜ Quick Setup (Panel + Wings)...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) quick
-                pause ;;
-            10) echo -e "  ${CYAN}➜ Uninstalling Pterodactyl...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/Satyam-Bhaii/pterodactyl-installer/main/pterodactyl-installer.sh) uninstall
-                pause ;;
-            11) echo -e "  ${CYAN}➜ Showing Credentials...${NC}"
-                cat /root/pterodactyl_credentials.txt 2>/dev/null || echo -e "  ${RED}No credentials found!${NC}"
-                pause ;;
+            1)  run_installer "panel" "Pterodactyl Panel" ;;
+            2)  run_installer "themes" "SATYAM Theme" ;;
+            3)  run_installer "themes" "Nebula Theme" ;;
+            4)  run_installer "themes" "Hyper-V Theme" ;;
+            5)  run_installer "themes" "Extensions" ;;
+            6)  run_installer "themes" "All Extensions" ;;
+            7)  run_installer "wings" "Wings Daemon" ;;
+            8)  run_installer "configure" "Wings Auto-Configuration" ;;
+            9)  run_installer "quick" "Quick Setup (Panel + Wings)" ;;
+            10) run_installer "uninstall" "Panel Uninstall" ;;
+            11) 
+                echo -e "  ${CYAN}➜ Showing Credentials...${NC}"
+                echo -e "${GRAY}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                echo ""
+                if [[ -f /root/pterodactyl_credentials.txt ]]; then
+                    cat /root/pterodactyl_credentials.txt
+                else
+                    echo -e "${RED}✗ No credentials found!${NC}"
+                    echo -e "${YELLOW}Panel may not be installed yet.${NC}"
+                fi
+                pause
+                ;;
             0)  echo -e "\n  ${RED}👋 Shutting down. Goodbye!${NC}"
                 exit 0 ;;
             *)  echo -e "  ${RED}⚠ Invalid Selection${NC}"
