@@ -302,24 +302,24 @@ configure_panel() {
 
     cd ${PANEL_DIR}
 
-    # FIRST: Generate encryption key BEFORE anything else!
+    # FIRST: Ensure .env file exists
+    if [[ ! -f .env ]]; then
+        info "Creating .env file..."
+        cp .env.example .env 2>/dev/null || touch .env
+    fi
+
+    # SECOND: Generate encryption key (will work now)
     info "Generating encryption key..."
-    php artisan key:generate --force --no-interaction >/dev/null 2>&1 || {
-        # If key generation fails, fix permissions and retry
-        warn "First attempt failed, fixing permissions..."
-        chown -R www-data:www-data ${PANEL_DIR}
-        chmod -R 755 ${PANEL_DIR}/storage ${PANEL_DIR}/bootstrap/cache
-        php artisan key:generate --force --no-interaction >/dev/null 2>&1
-    }
+    php artisan key:generate --force --no-interaction >/dev/null 2>&1
     
-    # SECOND: Install Composer dependencies (now key exists, no errors!)
+    # THIRD: Install Composer dependencies (now key exists, no errors!)
     info "Installing Composer dependencies..."
     export COMPOSER_ALLOW_SUPERUSER=1
     composer install --no-dev --optimize-autoloader --no-interaction >/dev/null 2>&1 || {
         warn "Composer install had issues, continuing..."
     }
 
-    # THIRD: Clear all cache (completely silent)
+    # FOURTH: Clear all cache (completely silent)
     info "Clearing cache..."
     {
         php artisan config:clear --no-interaction >/dev/null 2>&1 &
