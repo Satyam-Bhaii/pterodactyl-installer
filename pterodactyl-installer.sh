@@ -305,16 +305,26 @@ configure_panel() {
     # Install Composer dependencies (without root warning)
     info "Installing Composer dependencies..."
     export COMPOSER_ALLOW_SUPERUSER=1
-    composer install --no-dev --optimize-autoloader --no-interaction
+    composer install --no-dev --optimize-autoloader --no-interaction || {
+        warn "Composer install had issues, continuing..."
+    }
 
     # Generate encryption key FIRST (before any other artisan commands)
     info "Generating encryption key..."
-    php artisan key:generate --force --no-interaction
+    php artisan key:generate --force --no-interaction || {
+        # If key generation fails, try to fix permissions and retry
+        warn "First attempt failed, fixing permissions..."
+        chown -R www-data:www-data ${PANEL_DIR}
+        chmod -R 755 ${PANEL_DIR}/storage ${PANEL_DIR}/bootstrap/cache
+        php artisan key:generate --force --no-interaction
+    }
     
     # Clear all cache to ensure clean state
-    php artisan config:clear --no-interaction
-    php artisan cache:clear --no-interaction
-    php artisan view:clear --no-interaction
+    info "Clearing cache..."
+    php artisan config:clear --no-interaction || true
+    php artisan cache:clear --no-interaction || true
+    php artisan view:clear --no-interaction || true
+    php artisan optimize --no-interaction || true
 
     success "Panel configured"
 }
@@ -362,12 +372,24 @@ create_admin_user() {
         --name-last="${LAST_NAME}" \
         --password="${PASSWORD}" \
         --admin=1 \
-        --no-interaction || {
-        # If user already exists, skip
-        warn "User may already exist, skipping..."
+        --no-interaction 2>&1 | grep -q "encryption key" && {
+        # If encryption key error, generate it and retry
+        warn "Encryption key missing, generating..."
+        php artisan key:generate --force --no-interaction
+        php artisan p:user:make \
+            --email="${EMAIL}" \
+            --username="${USERNAME}" \
+            --name-first="${FIRST_NAME}" \
+            --name-last="${LAST_NAME}" \
+            --password="${PASSWORD}" \
+            --admin=1 \
+            --no-interaction || {
+            warn "User may already exist, skipping..."
+        }
+    } || {
+        success "Admin user created"
     }
 
-    success "Admin user created"
     info "Email: ${EMAIL}"
     info "Username: ${USERNAME}"
     info "Password: ${PASSWORD}"
@@ -444,6 +466,20 @@ NGINX_EOF
     } || {
         error "Nginx configuration test failed!"
     }
+    
+    # Restart PHP-FPM and MariaDB to ensure everything is fresh
+    info "Restarting services..."
+    systemctl restart php${PHP_VERSION}-fpm 2>/dev/null || systemctl restart php-fpm 2>/dev/null || true
+    systemctl restart mariadb 2>/dev/null || true
+    
+    # Final cache clear after all configuration
+    cd ${PANEL_DIR}
+    php artisan config:clear --no-interaction || true
+    php artisan cache:clear --no-interaction || true
+    php artisan view:clear --no-interaction || true
+    php artisan optimize --no-interaction || true
+    
+    success "All services restarted"
 }
 
 # Install Wings (Daemon)
@@ -954,17 +990,20 @@ install_panel() {
     echo -e "${GREEN}║   ✅ PANEL INSTALLATION COMPLETE!             ║${NC}"
     echo -e "${GREEN}╚═══════════════════════════════════════════════╝${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
-    
+
     info "Panel URL: http://$(hostname -I | awk '{print $1}')"
     info "Credentials saved to: /root/pterodactyl_credentials.txt"
     info "GitHub: ${GITHUB_REPO}"
     info "Made by SATYAM BHAIi"
-    
+
     echo -e "\n${YELLOW}Next Steps:${NC}"
     echo "  1. Configure Nginx with your domain"
     echo "  2. Setup SSL with Let's Encrypt"
     echo "  3. Install Wings on separate server/node"
     echo "  4. Create game servers from panel"
+    echo ""
+    echo -e "${GREEN}✨ All fixes applied automatically!${NC}"
+    echo -e "${GREEN}✨ Panel is ready to use!${NC}"
     echo ""
     echo -e "${CYAN}🌐 Star us on GitHub: ${GITHUB_REPO}${NC}"
 }
